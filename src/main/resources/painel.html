@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AquaMap - Painel</title>
+
+<!-- Leaflet desenha o mapa e Chart.js desenha os graficos (ambos carregados da internet) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+  body { margin: 0; font-family: Arial, sans-serif; background: #eef4f7; color: #1d2b33; }
+  header { background: #0b5e6e; color: white; padding: 16px 24px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 4px 0 0; font-size: 13px; opacity: .85; }
+  main { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px; }
+  .cartao { background: white; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+  .cartao h2 { margin: 0 0 12px; font-size: 16px; color: #0b5e6e; }
+  #mapa { height: 320px; border-radius: 6px; }
+  #alertas { max-height: 320px; overflow-y: auto; }
+  .alerta { border-left: 4px solid #d9534f; background: #fdf1f0; padding: 8px 10px; margin-bottom: 8px; border-radius: 4px; }
+  .alerta strong { display: block; }
+  .alerta small { color: #666; }
+  .alerta p { margin: 4px 0 0; font-size: 13px; }
+  .vazio { color: #777; font-style: italic; }
+  select { margin-bottom: 8px; padding: 4px; }
+  @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>AquaMap - Painel de Monitoramento Ambiental</h1>
+  <p>Atualiza sozinho a cada 5 segundos. <span id="atualizado"></span></p>
+</header>
+
+<main>
+  <section class="cartao">
+    <h2>Mapa das comunidades monitoradas</h2>
+    <div id="mapa"></div>
+    <p id="semCoordenadas" class="vazio"></p>
+  </section>
+
+  <section class="cartao">
+    <h2>Alertas e recomendacoes preventivas</h2>
+    <div id="alertas"></div>
+  </section>
+
+  <section class="cartao">
+    <h2>Evolucao historica do Indice AquaMap (0 a 10)</h2>
+    <label>Bairro: <select id="filtroBairro"></select></label>
+    <canvas id="graficoIndice"></canvas>
+  </section>
+
+  <section class="cartao">
+    <h2>Indicadores de qualidade da agua</h2>
+    <canvas id="graficoIndicadores"></canvas>
+  </section>
+
+  <section class="cartao">
+    <h2>Ranking dos principais fatores de contaminacao</h2>
+    <canvas id="graficoRanking"></canvas>
+  </section>
+</main>
+
+<script>
+  const CORES = { BOA: '#2e9d4f', REGULAR: '#e0a800', RUIM: '#d9534f' };
+  let dados = null;
+
+  // ---------- Mapa ----------
+  const mapa = L.map('mapa').setView([-3.10, -60.02], 11); // Manaus
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(mapa);
+  const camadaPontos = L.layerGroup().addTo(mapa);
+  let mapaCentralizado = false;
+
+  function desenharMapa() {
+    camadaPontos.clearLayers();
+    const semCoordenadas = [];
+    const posicoes = [];
+
+    dados.comunidades.forEach(c => {
+      if (c.latitude === null) { semCoordenadas.push(c.bairro); return; }
+      const cor = CORES[c.classificacao] || '#999'; // cinza = ainda sem coleta
+      const texto = c.indice === null
+        ? `<b>${esc(c.bairro)}</b><br>Sem coletas ainda`
+        : `<b>${esc(c.bairro)}</b><br>Indice: ${c.indice}/10 - ${c.classificacao}<br>Ultima coleta: ${c.data}`;
+      L.circleMarker([c.latitude, c.longitude], { radius: 12, color: cor, fillColor: cor, fillOpacity: .7 })
+        .bindPopup(texto).addTo(camadaPontos);
+      posicoes.push([c.latitude, c.longitude]);
+    });
+
+    if (!mapaCentralizado && posicoes.length > 0) {
+      mapa.fitBounds(posicoes, { maxZoom: 13, padding: [30, 30] });
+      mapaCentralizado = true;
+    }
+    document.getElementById('semCoordenadas').textContent = semCoordenadas.length
+      ? 'Sem coordenadas em data/comunidades.csv: ' + semCoordenadas.join(', ')
+      : '';
+  }
+
+  // ---------- Alertas e recomendacoes ----------
+  function desenharAlertas() {
+    const caixa = document.getElementById('alertas');
+    if (dados.alertas.length === 0) {
+      caixa.innerHTML = '<p class="vazio">Nenhum alerta no momento.</p>';
+      return;
+    }
+    caixa.innerHTML = dados.alertas.map(a => `
+      <div class="alerta">
+        <strong>${esc(a.problema)} - ${esc(a.bairro)}</strong>
+        <small>${a.data}</small>
+        <p>${esc(a.recomendacao)}</p>
+      </div>`).join('');
+  }
+
+  // ---------- Graficos ----------
+  const graficoIndice = new Chart(document.getElementById('graficoIndice'), {
+    type: 'line',
+    data: { labels: [], datasets: [{ label: 'Indice AquaMap', data: [], borderColor: '#0b5e6e', tension: .3 }] },
+    options: { scales: { y: { min: 0, max: 10 } } }
+  });
+
+  const graficoIndicadores = new Chart(document.getElementById('graficoIndicadores'), {
+    type: 'line',
+    data: { labels: [], datasets: [
+      { label: 'pH', data: [], borderColor: '#6f42c1', tension: .3 },
+      { label: 'Turbidez (NTU)', data: [], borderColor: '#8b5a2b', tension: .3 },
+      { label: 'Temperatura (C)', data: [], borderColor: '#e8590c', tension: .3 }
+    ] }
+  });
+
+  const graficoRanking = new Chart(document.getElementById('graficoRanking'), {
+    type: 'bar',
+    data: { labels: [], datasets: [{ label: 'Coletas com o problema', data: [], backgroundColor: '#d9534f' }] },
+    options: { indexAxis: 'y', scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+  });
+
+  function atualizarFiltro() {
+    const filtro = document.getElementById('filtroBairro');
+    const escolhido = filtro.value;
+    const bairros = [...new Set(dados.coletas.map(c => c.bairro))];
+    filtro.innerHTML = '<option value="">Todos</option>'
+      + bairros.map(b => `<option value="${esc(b)}">${esc(b)}</option>`).join('');
+    filtro.value = escolhido;
+  }
+
+  function desenharGraficos() {
+    const bairro = document.getElementById('filtroBairro').value;
+    const coletas = dados.coletas.filter(c => !bairro || c.bairro === bairro);
+    const datas = coletas.map(c => c.data + ' (' + c.bairro + ')');
+
+    graficoIndice.data.labels = datas;
+    graficoIndice.data.datasets[0].data = coletas.map(c => c.indice);
+    graficoIndice.update();
+
+    graficoIndicadores.data.labels = datas;
+    graficoIndicadores.data.datasets[0].data = coletas.map(c => c.ph);
+    graficoIndicadores.data.datasets[1].data = coletas.map(c => c.turbidez);
+    graficoIndicadores.data.datasets[2].data = coletas.map(c => c.temperatura);
+    graficoIndicadores.update();
+
+    graficoRanking.data.labels = dados.ranking.map(r => r.fator);
+    graficoRanking.data.datasets[0].data = dados.ranking.map(r => r.ocorrencias);
+    graficoRanking.update();
+  }
+
+  document.getElementById('filtroBairro').addEventListener('change', desenharGraficos);
+
+  // ---------- Atualizacao em tempo real ----------
+  // A pagina pede os dados ao Java (/api/dados) e redesenha tudo a cada 5 segundos.
+  async function atualizar() {
+    try {
+      const resposta = await fetch('/api/dados');
+      dados = await resposta.json();
+      desenharMapa();
+      desenharAlertas();
+      atualizarFiltro();
+      desenharGraficos();
+      document.getElementById('atualizado').textContent = 'Ultima atualizacao: ' + new Date().toLocaleTimeString();
+    } catch (erro) {
+      document.getElementById('atualizado').textContent = 'Sem conexao com o SistemaApp.';
+    }
+  }
+
+  // Evita que nomes digitados no sensor quebrem o HTML.
+  function esc(texto) {
+    return String(texto).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  }
+
+  atualizar();
+  setInterval(atualizar, 5000);
+</script>
+</body>
+</html>

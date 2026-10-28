@@ -18,6 +18,13 @@ public class SistemaApp {
         System.out.println("Coletas e agendamentos ficam salvos na pasta data.");
         System.out.println("Agendamentos salvos:");
         sistema.mostrarAgendamentos();
+
+        try {
+            new PainelServidor(sistema).iniciar();
+        } catch (IOException erroPainel) {
+            System.out.println("Nao foi possivel iniciar o painel: " + erroPainel.getMessage());
+        }
+
         System.out.println("Aguardando o sensor na porta " + PORTA + "...\n");
 
         try (ServerSocket servidor = new ServerSocket(PORTA)) {

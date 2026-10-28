@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class SistemaAquaMap {
@@ -20,8 +21,16 @@ public class SistemaAquaMap {
         carregarHistorico();
     }
 
-    public String receberColeta(String pessoa, String bairro, ArrayList<Medicao> medicoes,
-                                boolean avancarMes) {
+    // Copia do historico em ordem de data, usada pelo painel.
+    // synchronized porque o painel le o historico em outra thread enquanto o sensor grava.
+    public synchronized List<RegistroColeta> getHistorico() {
+        ArrayList<RegistroColeta> copia = new ArrayList<>(historico);
+        copia.sort(Comparator.comparing(RegistroColeta::getHorario));
+        return copia;
+    }
+
+    public synchronized String receberColeta(String pessoa, String bairro, ArrayList<Medicao> medicoes,
+                                             boolean avancarMes) {
         LocalDate proximaData = dataDaProximaColeta(pessoa, bairro);
         if (!avancarMes && proximaData != null && proximaData.isAfter(LocalDate.now())) {
             return "Coleta ainda nao liberada. A proxima esta agendada para " + proximaData + ".";
@@ -223,8 +232,8 @@ public class SistemaAquaMap {
 
         ArrayList<String> interpretacoes = new ArrayList<>();
         if (anomalias.contains("pH")) {
-            String direcao = deltaPH > 0 ? "aumento" : "queda";
-            interpretacoes.add("O " + direcao + " do pH pode refletir processos naturais ou entrada de substancias; o pH sozinho nao identifica a causa.");
+            String direcao = deltaPH > 0 ? "O aumento" : "A queda";
+            interpretacoes.add(direcao + " do pH pode refletir processos naturais ou entrada de substancias; o pH sozinho nao identifica a causa.");
         }
         if (anomalias.contains("turbidez")) {
             if (deltaTurbidez > 0) {
