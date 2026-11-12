@@ -140,6 +140,115 @@
   .legenda-vetor .antes::before { background: #3d7ea6; }
   .legenda-vetor .depois::before { background: #e8590c; }
   .legenda-vetor .auto::before { background: #2e9d4f; }
+  /* ---- Etapa 1: transformacao linear passo a passo ---- */
+  .tl-barra { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .tl-cenario { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; color: var(--lateral); }
+  .tl-tag { font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; background: var(--lateral); color: #fff; padding: 4px 9px; border-radius: 99px; }
+  .tl-nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .tl-nav button, .tl-btn {
+    padding: 8px 14px; border-radius: 8px; border: 1px solid var(--lateral-ativo);
+    background: var(--lateral-ativo); color: #fff; cursor: pointer; font: inherit; font-size: .85rem;
+  }
+  .tl-nav button.sec, .tl-btn.sec { background: #fff; color: var(--lateral); }
+  .tl-nav button:disabled { opacity: .35; cursor: default; }
+  .tl-rotulo { font-size: .8rem; color: var(--texto-suave); min-width: 104px; text-align: center; }
+  .tl-narracao {
+    background: var(--lateral); color: #e8f4f6; border-radius: 12px; padding: 16px 20px;
+    font-size: 1.05rem; line-height: 1.6; margin-bottom: 18px; min-height: 90px;
+  }
+  .tl-narracao b { color: #7ee0f0; }
+  .tl-fluxo { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 22px; align-items: stretch; margin-bottom: 18px; }
+  .tl-card {
+    position: relative; background: #fff; border: 1px solid var(--borda); border-radius: 12px;
+    padding: 14px 16px 16px; transition: opacity .35s, filter .35s, transform .35s, box-shadow .35s;
+  }
+  .tl-card:nth-child(2)::before, .tl-card:nth-child(4)::before {
+    content: "→"; position: absolute; left: -19px; top: 50%; transform: translateY(-50%);
+    width: 16px; text-align: center; color: var(--lateral-ativo); font-weight: 700; font-size: 1.15rem;
+  }
+  .tl-card.oculto { opacity: .14; filter: grayscale(1); transform: scale(.97); }
+  .tl-card.foco { box-shadow: 0 0 0 3px #7ee0f0, 0 10px 28px rgba(11,61,71,.16); transform: translateY(-3px); }
+  .tl-cab { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; }
+  .tl-num {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--lateral); color: #fff;
+    display: grid; place-items: center; font-weight: 700; font-size: .9rem; flex-shrink: 0;
+  }
+  .tl-titulo { font-weight: 700; color: var(--lateral); }
+  .tl-sub { font-size: .76rem; color: var(--texto-suave); }
+
+  .tl-vet { display: flex; gap: 12px; align-items: center; justify-content: center; }
+  .tl-rotulos, .tl-col { display: grid; grid-auto-rows: 42px; align-items: center; }
+  .tl-rotulos { font-size: .88rem; color: var(--texto-suave); text-align: right; }
+  .tl-col {
+    padding: 4px 16px; border-left: 3px solid var(--texto); border-right: 3px solid var(--texto);
+    border-radius: 12px; text-align: center; font-size: 1.35rem; font-weight: 700; font-variant-numeric: tabular-nums;
+  }
+  .tl-col small { font-size: .7rem; font-weight: 500; margin-left: 4px; color: var(--texto-suave); }
+  .tl-obs { margin: 12px 0 0; text-align: center; font-size: .8rem; color: var(--texto-suave); }
+
+  .tl-gauge { margin-bottom: 14px; }
+  .tl-linha-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: .85rem; margin-bottom: 6px; }
+  .tl-trilho { position: relative; height: 14px; background: #e6eef2; border-radius: 99px; }
+  .tl-zona { position: absolute; top: 0; bottom: 0; min-width: 5px; background: #9fd9b0; border-radius: 99px; }
+  .tl-desvio { position: absolute; top: 4px; height: 6px; background: var(--vermelho); border-radius: 99px; }
+  .tl-marca {
+    position: absolute; top: 50%; width: 18px; height: 18px; border-radius: 50%;
+    border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); transform: translate(-50%, -50%);
+  }
+  .tl-escala { display: flex; justify-content: space-between; font-size: .68rem; color: var(--texto-suave); margin-top: 5px; }
+  .tl-caixa { margin-top: 4px; padding: 8px 10px; background: #f0f6f8; border-radius: 8px; text-align: center; font-size: .9rem; font-variant-numeric: tabular-nums; }
+
+  .tl-eq { display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .tl-bloco { text-align: center; }
+  .tl-letra { font-family: "Cambria Math", Georgia, serif; font-style: italic; font-weight: 700; font-size: 1.15rem; color: var(--lateral); margin-bottom: 4px; }
+  .tl-mat, .tl-col3 {
+    display: grid; gap: 4px; padding: 4px 8px; border-left: 3px solid var(--texto); border-right: 3px solid var(--texto);
+    border-radius: 10px; font-variant-numeric: tabular-nums;
+  }
+  .tl-mat { grid-template-columns: repeat(3, 38px); }
+  .tl-col3 { grid-template-columns: 56px; }
+  .tl-mat span, .tl-col3 span { height: 34px; display: grid; place-items: center; border-radius: 6px; font-weight: 700; font-size: .95rem; }
+  .tl-mat span.zero { color: #b8c6cd; font-weight: 400; }
+  .tl-op { font-size: 1.4rem; color: var(--texto-suave); padding-top: 24px; }
+  .tl-contas { margin-top: 14px; display: grid; gap: 6px; font-size: .88rem; font-variant-numeric: tabular-nums; }
+  .tl-contas div { padding: 6px 10px; border-radius: 8px; background: #f6f9fa; display: flex; gap: 8px; align-items: center; }
+  .tl-ponto { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .tl-card.animar .r0 { animation: tl-flash .9s ease .15s both; }
+  .tl-card.animar .r1 { animation: tl-flash .9s ease 1s both; }
+  .tl-card.animar .r2 { animation: tl-flash .9s ease 1.85s both; }
+  @keyframes tl-flash { 0%, 100% { box-shadow: none; transform: none; } 40% { box-shadow: 0 0 0 3px #7ee0f0; transform: scale(1.08); } }
+
+  .tl-fill { height: 100%; border-radius: 99px; transition: width .3s; }
+  .tl-indice { margin-top: 14px; border: 2px solid; border-radius: 12px; padding: 12px; text-align: center; }
+  .tl-ind-rot { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--texto-suave); }
+  .tl-ind-val { font-size: 2.3rem; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .tl-ind-cls { display: inline-block; color: #fff; font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 99px; margin-top: 4px; }
+  .tl-ind-f { font-size: .78rem; color: var(--texto-suave); margin-top: 6px; font-variant-numeric: tabular-nums; }
+
+  .tl-porque { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .tl-porque p, .tl-porque li { font-size: .9rem; line-height: 1.55; }
+  .tl-porque ul { padding-left: 1.1rem; margin: 0; }
+  .tl-porque li { margin-bottom: 6px; }
+  .tl-tab { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: .85rem; font-variant-numeric: tabular-nums; }
+  .tl-tab th, .tl-tab td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--borda); }
+  .tl-tab th:first-child, .tl-tab td:first-child { text-align: left; }
+  .tl-tab th { font-size: .7rem; text-transform: uppercase; color: var(--texto-suave); letter-spacing: .04em; }
+  .tl-ok { color: var(--verde); font-weight: 700; }
+  .tl-pergunta {
+    margin-top: 12px; padding: 10px 12px; background: #fff8e6; border-left: 4px solid var(--amarelo);
+    border-radius: 0 8px 8px 0; font-size: .84rem; line-height: 1.5;
+  }
+  @media (min-width: 1500px) {
+    .tl-fluxo { grid-template-columns: 1fr 1.15fr 1.6fr 1.15fr; }
+    .tl-card:nth-child(3)::before {
+      content: "→"; position: absolute; left: -19px; top: 50%; transform: translateY(-50%);
+      width: 16px; text-align: center; color: var(--lateral-ativo); font-weight: 700; font-size: 1.15rem;
+    }
+  }
+  @media (max-width: 1100px) {
+    .tl-fluxo, .tl-porque { grid-template-columns: 1fr; }
+    .tl-card::before { display: none; }
+  }
   @media (max-width: 960px) {
     .lab-controles { grid-template-columns: 1fr; }
     .lab-grid { grid-template-columns: 1fr; }
@@ -236,7 +345,7 @@
       <p class="subtitulo-tela">Simule uma coleta e percorra as etapas para demonstrar algebra linear no AquaMap.</p>
 
       <div class="lab-sim">
-        <h3>1. Simule os indicadores (pH, turbidez, temperatura)</h3>
+        <h3>Simule uma coleta (pH, turbidez, temperatura)</h3>
         <div class="lab-controles">
           <div>
             <label>pH <span class="lab-valor" id="lab-val-ph">7.5</span></label>
@@ -251,12 +360,12 @@
             <input type="range" id="lab-temp" min="15" max="40" step="0.5" value="25">
           </div>
           <div class="lab-botoes">
-            <button type="button" id="lab-rodar">Rodar simulacao</button>
+            <button type="button" id="lab-nova">Nova simulação</button>
             <button type="button" class="sec" id="lab-ultima">Usar ultima coleta</button>
             <button type="button" class="sec" id="lab-ideal">Cenario ideal</button>
           </div>
         </div>
-        <div class="lab-resumo" id="lab-resumo">Ajuste os controles e clique em <strong>Rodar simulacao</strong>.</div>
+        <div class="lab-resumo" id="lab-resumo">Mexa nos controles ou clique em <strong>Nova simulação</strong>.</div>
       </div>
 
       <div class="lab-etapas" id="lab-etapas">
@@ -266,23 +375,53 @@
       </div>
 
       <div id="lab-etapa-1" class="lab-etapa ativa">
-        <div class="lab-grid">
+        <div class="tl-barra">
+          <div class="tl-cenario"><span class="tl-tag">Cenário</span><strong id="tl-cenario">—</strong></div>
+          <div class="tl-nav">
+            <button type="button" class="sec" id="tl-anterior">◀ Anterior</button>
+            <span class="tl-rotulo" id="tl-rotulo">Visão completa</span>
+            <button type="button" id="tl-proximo">Passo a passo ▶</button>
+            <button type="button" class="sec" id="tl-tudo">Mostrar tudo</button>
+          </div>
+        </div>
+        <div class="tl-narracao" id="tl-narracao"></div>
+
+        <div class="tl-fluxo">
+          <div class="tl-card" data-passo="1">
+            <div class="tl-cab"><span class="tl-num">1</span><div><div class="tl-titulo">Medição</div><div class="tl-sub">vetor v — cada valor numa unidade</div></div></div>
+            <div id="tl-c1"></div>
+          </div>
+          <div class="tl-card" data-passo="2">
+            <div class="tl-cab"><span class="tl-num">2</span><div><div class="tl-titulo">Desvio</div><div class="tl-sub">vetor d — quanto saiu da faixa segura</div></div></div>
+            <div id="tl-c2"></div>
+          </div>
+          <div class="tl-card" data-passo="3" id="tl-card3">
+            <div class="tl-cab"><span class="tl-num">3</span><div><div class="tl-titulo">Transformação linear</div><div class="tl-sub">p = A · d — a matriz converte unidades em pontos</div></div></div>
+            <div id="tl-c3"></div>
+          </div>
+          <div class="tl-card" data-passo="4">
+            <div class="tl-cab"><span class="tl-num">4</span><div><div class="tl-titulo">Nota e índice</div><div class="tl-sub">nota = 10 − p, depois a média</div></div></div>
+            <div id="tl-c4"></div>
+          </div>
+        </div>
+
+        <div class="tl-porque">
           <div class="painel">
-            <h3>O que a transformacao faz no AquaMap</h3>
-            <p style="font-size:.88rem;color:var(--texto-suave);margin:0 0 12px">
-              O vetor bruto da coleta e padronizado com uma matriz diagonal <strong>D</strong> e a media <strong>μ</strong> do historico.
-              Depois, cada eixo vira nota 0–10 (mesmas regras do Java).
-            </p>
-            <div id="lab-t1-matriz" class="matriz"></div>
-            <div id="lab-t1-resultado" class="resultado-lab"></div>
+            <h3>Por que é uma transformação linear?</h3>
+            <p>Uma transformação <strong>T</strong> é linear quando respeita duas regras:
+              <strong>T(u + w) = T(u) + T(w)</strong> e <strong>T(k·u) = k·T(u)</strong>.
+              Multiplicar por uma matriz fixa sempre cumpre isso. Na prática: <strong>o dobro de desvio gera o dobro de penalidade</strong>.</p>
+            <button type="button" class="tl-btn" id="tl-testar">Testar: dobrar o desvio</button>
+            <div id="tl-teste"></div>
           </div>
           <div class="painel">
-            <h3>Visual (plano pH × turbidez)</h3>
-            <canvas id="lab-canvas-t1" class="lab-canvas" width="300" height="300"></canvas>
-            <div class="legenda-vetor">
-              <span class="antes">Vetor bruto</span>
-              <span class="depois">Apos padronizar (D)</span>
-            </div>
+            <h3>Por que usar uma matriz?</h3>
+            <ul>
+              <li><strong>Converte unidades em pontos.</strong> Cada número da diagonal é uma "taxa de câmbio": 1 de pH vale 2 pontos, 1 NTU vale 0,2 ponto e 1 °C vale 0,5 ponto.</li>
+              <li><strong>É fixa.</strong> A mesma matriz A serve para qualquer coleta. É a mesma regra usada no Java (<code>SistemaAquaMap</code>).</li>
+              <li><strong>É diagonal.</strong> Os zeros fora da diagonal dizem que um indicador não mexe na penalidade do outro.</li>
+            </ul>
+            <div class="tl-pergunta"><strong>Se perguntarem:</strong> o cálculo do desvio (passo 2) e o "10 − p" (passo 4) não são lineares: um é uma régua e o outro é um deslocamento (transformação afim). A parte linear é a matriz A, e é por isso que ela nunca muda.</div>
           </div>
         </div>
       </div>
@@ -587,10 +726,6 @@
     ];
   }
 
-  function padronizar(v, mu, sig) {
-    return [(v[0] - mu[0]) / sig[0], (v[1] - mu[1]) / sig[1], (v[2] - mu[2]) / sig[2]];
-  }
-
   function desenharCanvasVetores(canvasId, origem, vetores, escalas) {
     const cvs = document.getElementById(canvasId);
     const ctx = cvs.getContext('2d');
@@ -627,17 +762,14 @@
     const vetores = (dados && dados.coletas.length)
       ? dados.coletas.map(c => [c.ph, c.turbidez, c.temperatura]) : [];
     vetores.push(v);
-    const { mu, sig } = vetores.length > 1 ? mediaDesvio(vetores) : { mu: MU_PADRAO, sig: SIGMA_PADRAO };
-    const z = padronizar(v, mu, sig);
     const notas = [pontuarPH(v[0]), pontuarTurbidez(v[1]), pontuarTemp(v[2])];
     const indice = produtoEscalar(notas, [1/3, 1/3, 1/3]);
-    labSim = { v, z, notas, indice, mu, sig, classificacao: classificarIndice(indice) };
+    labSim = { v, notas, indice, classificacao: classificarIndice(indice) };
     labCov2 = cov2PhTurb(vetores);
 
     document.getElementById('lab-resumo').innerHTML =
-      `<strong>Simulado agora:</strong> pH = ${v[0].toFixed(2)}, turbidez = ${v[1].toFixed(2)} NTU, temperatura = ${v[2].toFixed(1)} °C`
-      + ` &rarr; Indice AquaMap <strong>${indice.toFixed(2)}</strong> (${labSim.classificacao}).`
-      + ` Avance pelas etapas abaixo para ver a matematica.`;
+      `<strong>${esc(tlCenarioNome)}:</strong> pH ${fmt(v[0], 1)}, turbidez ${fmt(v[1], 1)} NTU, temperatura ${fmt(v[2], 1)} °C`
+      + ` &rarr; Índice AquaMap <strong>${fmt(indice)}</strong> (${labSim.classificacao}).`;
 
     labEtapasVisitadas[labEtapa] = true;
     renderLabEtapa(labEtapa);
@@ -654,23 +786,198 @@
     if (n === 3) renderLabEtapa3();
   }
 
-  function renderLabEtapa1() {
-    const { v, z, notas, indice, mu, sig, classificacao } = labSim;
-    const D = diag(sig.map(s => (1 / s).toFixed(3)));
-    document.getElementById('lab-t1-matriz').innerHTML = `
-      <p><strong>v</strong> (bruto) = [${v.map(x => x.toFixed(2)).join(', ')}]</p>
-      <p><strong>μ</strong> (media do historico) = [${mu.map(x => x.toFixed(2)).join(', ')}]</p>
-      <p>Padronizacao linear: <strong>z = D (v − μ)</strong> com D diagonal:</p>
-      ${matrizHtml([[D[0][0], '0', '0'], ['0', D[1][1], '0'], ['0', '0', D[2][2]]])}
-      <p><strong>z</strong> = [${z.map(x => x.toFixed(3)).join(', ')}]</p>
-      <p>Notas (regras do Java): <strong>n</strong> = [${notas.map(x => x.toFixed(2)).join(', ')}]</p>`;
-    document.getElementById('lab-t1-resultado').textContent =
-      `Transformacao linear central no padrao μ; em seguida as funcoes f_i convertem para notas. Indice = (1/3) n·1 = ${indice.toFixed(2)} — ${classificacao}.`;
+  /* ---------- Etapa 1: transformacao linear passo a passo ---------- */
+  // Mesmas regras do Java (SistemaAquaMap.pontuar*): nota = 10 - peso * desvio
+  const TL_IND = [
+    { nome: 'pH',          unid: '',    cor: '#6f42c1', min: 5,  max: 10, faixa: [6.5, 8.5], peso: 2,   faixaTxt: 'ideal 6,5–8,5' },
+    { nome: 'Turbidez',    unid: 'NTU', cor: '#8b5a2b', min: 0,  max: 50, faixa: [0, 0],     peso: 0.2, faixaTxt: 'ideal 0 NTU' },
+    { nome: 'Temperatura', unid: '°C',  cor: '#e8590c', min: 15, max: 40, faixa: [20, 30],   peso: 0.5, faixaTxt: 'ideal 20–30 °C' }
+  ];
+  const TL_CENARIOS = [
+    { nome: 'Igarapé depois de chuva forte', ph: [6.0, 7.0], turb: [20, 45], temp: [26, 29] },
+    { nome: "Caixa d'água exposta ao sol",   ph: [7.0, 8.0], turb: [1, 4],   temp: [32, 38] },
+    { nome: 'Poço perto de obra (cal)',      ph: [9.0, 10],  turb: [6, 15],  temp: [24, 28] },
+    { nome: 'Água de torneira tratada',      ph: [6.8, 7.8], turb: [0.5, 3], temp: [22, 27] },
+    { nome: 'Ponto perto de esgoto',         ph: [5.2, 6.2], turb: [15, 35], temp: [29, 33] }
+  ];
+  const TL_TOTAL = 4;
+  let tlPasso = 0;               // 0 = visao completa; 1..4 = modo apresentacao
+  let tlCenarioNome = 'Cenário ideal';
+  let tlUltimoCenario = -1;
+  let tlTesteAtivo = false;
+  let tlDados = null;
 
-    desenharCanvasVetores('lab-canvas-t1', [0, 0], [
-      [(v[0] - 7) * 0.8, (v[1] - 5) * 0.15],
-      [z[0] * 0.9, z[1] * 0.9]
-    ], 35);
+  function fmt(x, casas = 2) {
+    return x.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
+  }
+  function pesoTxt(p) { return String(p).replace('.', ','); }
+  function limitar(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function desvioFaixa(x, f) { return x < f[0] ? f[0] - x : x > f[1] ? x - f[1] : 0; }
+  function corNota(n) { return n >= 8 ? CORES.BOA : n >= 5 ? CORES.REGULAR : CORES.RUIM; }
+
+  function tlCard1(v) {
+    return `<div class="tl-vet">
+        <div class="tl-rotulos">${TL_IND.map(i => `<span>${i.nome}</span>`).join('')}</div>
+        <div class="tl-col">${v.map((x, k) =>
+          `<span style="color:${TL_IND[k].cor}">${fmt(x, 1)}<small>${TL_IND[k].unid}</small></span>`).join('')}</div>
+      </div>
+      <p class="tl-obs">pH + NTU + °C não se somam: são unidades diferentes.</p>`;
+  }
+
+  function tlCard2(v, d) {
+    const gauges = TL_IND.map((ind, k) => {
+      const pos = x => (limitar(x, ind.min, ind.max) - ind.min) / (ind.max - ind.min) * 100;
+      const z0 = pos(ind.faixa[0]), z1 = pos(ind.faixa[1]), m = pos(v[k]);
+      const borda = v[k] < ind.faixa[0] ? z0 : z1;
+      const fora = d[k] > 0;
+      return `<div class="tl-gauge">
+          <div class="tl-linha-top"><span>${ind.nome}</span>
+            <strong style="color:${fora ? CORES.RUIM : CORES.BOA}">${fora ? 'saiu ' + fmt(d[k], 1) : 'dentro da faixa'}</strong></div>
+          <div class="tl-trilho">
+            <div class="tl-zona" style="left:${z0}%;width:${z1 - z0}%"></div>
+            ${fora ? `<div class="tl-desvio" style="left:${Math.min(borda, m)}%;width:${Math.abs(m - borda)}%"></div>` : ''}
+            <div class="tl-marca" style="left:${m}%;background:${ind.cor}"></div>
+          </div>
+          <div class="tl-escala"><span>${ind.min}</span><span>${ind.faixaTxt}</span><span>${ind.max}</span></div>
+        </div>`;
+    }).join('');
+    return gauges + `<div class="tl-caixa"><strong>d</strong> = ( ${d.map(x => fmt(x, 1)).join(' ; ')} )</div>`;
+  }
+
+  function tlCard3(d, p) {
+    const mat = TL_IND.map((ind, r) => TL_IND.map((_, c) => r === c
+      ? `<span class="r${r}" style="background:${ind.cor}22;color:${ind.cor}">${pesoTxt(ind.peso)}</span>`
+      : `<span class="r${r} zero">0</span>`).join('')).join('');
+    const col = vals => vals.map((x, r) => `<span class="r${r}" style="color:${TL_IND[r].cor}">${fmt(x, r === 1 ? 1 : 2)}</span>`).join('');
+    const contas = TL_IND.map((ind, r) =>
+      `<div class="r${r}"><span class="tl-ponto" style="background:${ind.cor}"></span>
+        ${ind.nome}: ${pesoTxt(ind.peso)} × ${fmt(d[r], r === 1 ? 1 : 2)} = <strong>${fmt(p[r])}</strong> pontos</div>`).join('');
+    return `<div class="tl-eq">
+        <div class="tl-bloco"><div class="tl-letra">A</div><div class="tl-mat">${mat}</div></div>
+        <span class="tl-op">·</span>
+        <div class="tl-bloco"><div class="tl-letra">d</div><div class="tl-col3">${col(d)}</div></div>
+        <span class="tl-op">=</span>
+        <div class="tl-bloco"><div class="tl-letra">p</div><div class="tl-col3">${col(p)}</div></div>
+      </div>
+      <div class="tl-contas">${contas}</div>`;
+  }
+
+  function tlCard4(p, n, indice, cls) {
+    const cor = CORES[cls];
+    const barras = TL_IND.map((ind, k) => `<div class="tl-gauge">
+        <div class="tl-linha-top"><span>${ind.nome}</span><span>10 − ${fmt(p[k])} = <strong>${fmt(n[k])}</strong></span></div>
+        <div class="tl-trilho" style="overflow:hidden"><div class="tl-fill" style="width:${n[k] * 10}%;background:${corNota(n[k])}"></div></div>
+      </div>`).join('');
+    return barras + `<div class="tl-indice" style="border-color:${cor}">
+        <div class="tl-ind-rot">Índice AquaMap</div>
+        <div class="tl-ind-val" style="color:${cor}">${fmt(indice)}</div>
+        <div class="tl-ind-cls" style="background:${cor}">${cls}</div>
+        <div class="tl-ind-f">( ${n.map(x => fmt(x)).join(' + ')} ) ÷ 3</div>
+      </div>`;
+  }
+
+  function tlTeste(d, p) {
+    if (!tlTesteAtivo) return '';
+    const linhas = TL_IND.map((ind, k) => {
+      const d2 = 2 * d[k], p2 = ind.peso * d2;
+      return `<tr><td>${ind.nome}</td><td>${fmt(d[k])}</td><td>${fmt(p[k])}</td>
+        <td>${fmt(d2)}</td><td>${fmt(p2)}</td><td class="tl-ok">= 2 × ${fmt(p[k])} ✓</td></tr>`;
+    }).join('');
+    return `<table class="tl-tab">
+        <tr><th>Indicador</th><th>d</th><th>A·d</th><th>2d</th><th>A·(2d)</th><th></th></tr>${linhas}
+      </table>
+      <p style="margin:10px 0 0">A penalidade dobrou junto com o desvio em todos os indicadores: <strong>A·(2d) = 2·(A·d)</strong>. Isso é linearidade.</p>`;
+  }
+
+  function tlNarracao() {
+    const { v, d, p, indice, cls } = tlDados;
+    const saiu = (k, faixa) => d[k] > 0 ? `saiu <b>${fmt(d[k], 1)}</b>` : `está dentro (${faixa}) → <b>0</b>`;
+    switch (tlPasso) {
+      case 1: return `O sensor mediu <b>pH ${fmt(v[0], 1)}</b>, <b>turbidez ${fmt(v[1], 1)} NTU</b> e <b>${fmt(v[2], 1)} °C</b>.
+        São três unidades diferentes: não dá para somar pH com graus. Guardamos as três medidas num <b>vetor v</b>.`;
+      case 2: return `Primeiro, medimos <b>o quanto cada valor saiu da faixa segura</b> (a parte verde).
+        pH ${saiu(0, '6,5–8,5')}. Turbidez: o ideal é 0 NTU, então todo NTU conta → <b>${fmt(d[1], 1)}</b>.
+        Temperatura ${saiu(2, '20–30 °C')}. Isso forma o <b>vetor d</b>.`;
+      case 3: return `Agora vem a <b>transformação linear</b>: multiplicamos d por uma <b>matriz A fixa</b>, que converte cada unidade em
+        <b>pontos de penalidade</b>: 1 de pH = 2 pontos, 1 NTU = 0,2 ponto, 1 °C = 0,5 ponto.
+        Cada linha da matriz cuida de um indicador → <b>p = (${p.map(x => fmt(x)).join(' ; ')})</b>.`;
+      case 4: return `Por fim, <b>nota = 10 − penalidade</b>. Agora as três estão <b>na mesma escala (0 a 10)</b> e podemos tirar a média:
+        <b>Índice AquaMap = ${fmt(indice)} → ${cls}</b>.`;
+      default: return `<b>Resumo:</b> medição <b>v</b> → desvio <b>d</b> → <b>A·d</b> = penalidade <b>p</b> → nota = 10 − p →
+        índice <b>${fmt(indice)} (${cls})</b>. Clique em <b>Passo a passo ▶</b> para explicar com calma.`;
+    }
+  }
+
+  function tlAplicarPasso(animar) {
+    if (!tlDados) return;
+    document.querySelectorAll('.tl-card').forEach(c => {
+      const k = +c.dataset.passo;
+      c.classList.toggle('oculto', tlPasso > 0 && k > tlPasso);
+      c.classList.toggle('foco', tlPasso > 0 && k === tlPasso);
+    });
+    document.getElementById('tl-rotulo').textContent = tlPasso === 0 ? 'Visão completa' : `Passo ${tlPasso} de ${TL_TOTAL}`;
+    document.getElementById('tl-anterior').disabled = tlPasso <= 1;
+    document.getElementById('tl-proximo').textContent =
+      tlPasso === 0 ? 'Passo a passo ▶' : tlPasso === TL_TOTAL ? 'Concluir ✓' : 'Próximo ▶';
+    document.getElementById('tl-tudo').disabled = tlPasso === 0;
+    document.getElementById('tl-narracao').innerHTML = tlNarracao();
+    if (animar && tlPasso === 3) {
+      const c3 = document.getElementById('tl-card3');
+      c3.classList.remove('animar');
+      void c3.offsetWidth;
+      c3.classList.add('animar');
+      clearTimeout(tlAplicarPasso.timer);
+      tlAplicarPasso.timer = setTimeout(() => c3.classList.remove('animar'), 3000);
+    }
+  }
+
+  function renderLabEtapa1() {
+    const v = labSim.v;
+    const d = v.map((x, k) => desvioFaixa(x, TL_IND[k].faixa));
+    const p = d.map((x, k) => TL_IND[k].peso * x);
+    const n = p.map(x => limitar(10 - x, 0, 10));
+    const indice = (n[0] + n[1] + n[2]) / 3;
+    const cls = classificarIndice(indice);
+    tlDados = { v, d, p, n, indice, cls };
+
+    document.getElementById('tl-cenario').textContent = tlCenarioNome;
+    document.getElementById('tl-c1').innerHTML = tlCard1(v);
+    document.getElementById('tl-c2').innerHTML = tlCard2(v, d);
+    document.getElementById('tl-c3').innerHTML = tlCard3(d, p);
+    document.getElementById('tl-c4').innerHTML = tlCard4(p, n, indice, cls);
+    document.getElementById('tl-teste').innerHTML = tlTeste(d, p);
+    tlAplicarPasso(false);
+  }
+
+  function irParaEtapa(n) {
+    labEtapa = n;
+    document.querySelectorAll('.etapa-btn').forEach(b => b.classList.toggle('ativo', +b.dataset.etapa === labEtapa));
+    document.querySelectorAll('.lab-etapa').forEach(p => p.classList.toggle('ativa', p.id === 'lab-etapa-' + labEtapa));
+    if (labSim) {
+      labEtapasVisitadas[labEtapa] = true;
+      renderLabEtapa(labEtapa);
+    }
+  }
+
+  function definirSliders(ph, turb, temp) {
+    document.getElementById('lab-ph').value = ph;
+    document.getElementById('lab-turb').value = turb;
+    document.getElementById('lab-temp').value = temp;
+    atualizarLabSlidersUi();
+  }
+
+  function novaSimulacao() {
+    let i;
+    do { i = Math.floor(Math.random() * TL_CENARIOS.length); } while (i === tlUltimoCenario && TL_CENARIOS.length > 1);
+    tlUltimoCenario = i;
+    const c = TL_CENARIOS[i];
+    const sortear = (faixa, passo) => Math.round((faixa[0] + Math.random() * (faixa[1] - faixa[0])) / passo) * passo;
+    definirSliders(sortear(c.ph, 0.1).toFixed(1), sortear(c.turb, 0.5), sortear(c.temp, 0.5));
+    tlCenarioNome = c.nome;
+    tlTesteAtivo = false;
+    tlPasso = 1;
+    irParaEtapa(1);
+    rodarSimulacaoLab();
   }
 
   function renderLabEtapa2() {
@@ -728,53 +1035,57 @@
     ], 35);
   }
 
-  function diag(vals) {
-    return [[vals[0], 0, 0], [0, vals[1], 0], [0, 0, vals[2]]];
-  }
-
   function atualizarLabSlidersUi() {
     ['ph', 'turb', 'temp'].forEach(k => {
       const inp = document.getElementById('lab-' + k);
-      document.getElementById('lab-val-' + k).textContent = (+inp.value).toFixed(k === 'ph' ? 1 : k === 'turb' ? 1 : 0);
+      document.getElementById('lab-val-' + k).textContent = (+inp.value).toFixed(1);
     });
   }
 
   function initLab() {
     ['lab-ph', 'lab-turb', 'lab-temp'].forEach(id => {
-      document.getElementById(id).addEventListener('input', atualizarLabSlidersUi);
+      document.getElementById(id).addEventListener('input', () => {
+        atualizarLabSlidersUi();
+        tlCenarioNome = 'Ajuste manual';
+        rodarSimulacaoLab();
+      });
     });
-    document.getElementById('lab-rodar').addEventListener('click', rodarSimulacaoLab);
+    document.getElementById('lab-nova').addEventListener('click', novaSimulacao);
     document.getElementById('lab-ideal').addEventListener('click', () => {
-      document.getElementById('lab-ph').value = IDEAL_BRUTO[0];
-      document.getElementById('lab-turb').value = IDEAL_BRUTO[1];
-      document.getElementById('lab-temp').value = IDEAL_BRUTO[2];
-      atualizarLabSlidersUi();
+      definirSliders(IDEAL_BRUTO[0], IDEAL_BRUTO[1], IDEAL_BRUTO[2]);
+      tlCenarioNome = 'Cenário ideal';
       rodarSimulacaoLab();
     });
     document.getElementById('lab-ultima').addEventListener('click', () => {
       if (!dados || !dados.coletas.length) {
-        document.getElementById('lab-resumo').textContent = 'Nenhuma coleta no sistema — use os sliders ou cenario ideal.';
+        document.getElementById('lab-resumo').textContent = 'Nenhuma coleta no sistema — use Nova simulação ou os controles.';
         return;
       }
       const c = dados.coletas[dados.coletas.length - 1];
-      document.getElementById('lab-ph').value = c.ph;
-      document.getElementById('lab-turb').value = c.turbidez;
-      document.getElementById('lab-temp').value = c.temperatura;
-      atualizarLabSlidersUi();
+      definirSliders(c.ph, c.turbidez, c.temperatura);
+      tlCenarioNome = 'Última coleta — ' + c.bairro;
       rodarSimulacaoLab();
     });
     document.querySelectorAll('.etapa-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        labEtapa = +btn.dataset.etapa;
-        document.querySelectorAll('.etapa-btn').forEach(b => b.classList.toggle('ativo', +b.dataset.etapa === labEtapa));
-        document.querySelectorAll('.lab-etapa').forEach(p => p.classList.toggle('ativa', p.id === 'lab-etapa-' + labEtapa));
-        if (labSim) {
-          labEtapasVisitadas[labEtapa] = true;
-          renderLabEtapa(labEtapa);
-        }
-      });
+      btn.addEventListener('click', () => irParaEtapa(+btn.dataset.etapa));
     });
+
+    document.getElementById('tl-proximo').addEventListener('click', () => {
+      tlPasso = tlPasso >= TL_TOTAL ? 0 : tlPasso + 1;
+      tlAplicarPasso(true);
+    });
+    document.getElementById('tl-anterior').addEventListener('click', () => {
+      if (tlPasso > 1) { tlPasso--; tlAplicarPasso(true); }
+    });
+    document.getElementById('tl-tudo').addEventListener('click', () => { tlPasso = 0; tlAplicarPasso(false); });
+    document.getElementById('tl-testar').addEventListener('click', () => {
+      tlTesteAtivo = !tlTesteAtivo;
+      document.getElementById('tl-testar').textContent = tlTesteAtivo ? 'Esconder teste' : 'Testar: dobrar o desvio';
+      if (tlDados) document.getElementById('tl-teste').innerHTML = tlTeste(tlDados.d, tlDados.p);
+    });
+
     atualizarLabSlidersUi();
+    rodarSimulacaoLab();
   }
 
   function desenharCartilha() {
@@ -801,7 +1112,7 @@
       desenharAlertas();
       atualizarFiltro();
       desenharGraficos();
-      if (labSim) rodarSimulacaoLab();
+      if (labSim && labEtapa !== 1) rodarSimulacaoLab(); // etapa 1 nao depende do historico: nao interrompe a apresentacao
       desenharCartilha();
       document.getElementById('atualizado').textContent = new Date().toLocaleTimeString();
     } catch {
