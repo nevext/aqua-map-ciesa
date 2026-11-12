@@ -74,7 +74,7 @@ public class SistemaApp {
         System.out.println("  AquaMap — sistema ligado");
         System.out.println();
         System.out.println("  Painel  " + urlPainel + "  (deve abrir no navegador)");
-        System.out.println("  Sensor  outro terminal: .\\sensor.cmd");
+        System.out.println("  Sensor  aba \"Sensor\" do painel (ou, no terminal: .\\sensor.cmd)");
         System.out.println();
         System.out.println("  Ctrl+C aqui para parar.");
         System.out.println();

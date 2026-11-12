@@ -1,2 +1,5 @@
 target/
 bin/
+
+# copias de seguranca criadas por "comecar do zero" (reiniciar.cmd ou botao do painel)
+data/backup/

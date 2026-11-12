@@ -14,6 +14,8 @@ public class SistemaAquaMap {
     private static final Path DIRETORIO_DADOS = Path.of("data");
     private static final Path ARQUIVO_COLETAS_ANTIGO = DIRETORIO_DADOS.resolve("coletas.csv");
     private static final Path ARQUIVO_AGENDAMENTOS = Path.of("data", "agendamentos.csv");
+    // Onde "comecar do zero" guarda as planilhas antigas (uma subpasta por data e hora).
+    private static final Path DIRETORIO_BACKUP = DIRETORIO_DADOS.resolve("backup");
     private final ArrayList<RegistroColeta> historico = new ArrayList<>();
     private final ArrayList<double[]> matrizHistorico = new ArrayList<>();
 
@@ -82,6 +84,72 @@ public class SistemaAquaMap {
 
         return String.format("Indice AquaMap: %.2f/10 - %s | Anomalia: %s",
                 qualidade, classificacao, atual.getAnomalia());
+    }
+
+    // Pasta onde ficam coletas.csv e coletas.xlsx deste responsavel (mostrada na aba Sensor).
+    public String pastaDasPlanilhas(String pessoa) {
+        return DIRETORIO_DADOS.resolve(nomeSeguro(pessoa)).toString().replace('\\', '/');
+    }
+
+    // Comecar do zero: move coletas, planilhas e agendamentos para data/backup/<data e hora>/ e
+    // esvazia o historico em memoria. Nada e apagado; data/comunidades.csv (mapa) e mantido.
+    public synchronized String reiniciarDados() {
+        int total = historico.size();
+        try {
+            Path destino = arquivarDados();
+            historico.clear();
+            matrizHistorico.clear();
+            if (destino == null) {
+                return "Nao havia dados para arquivar. O sistema ja esta limpo.";
+            }
+            System.out.println("[AQUAMAP] Dados reiniciados. Backup em " + destino);
+            return "Dados arquivados em " + destino.toString().replace('\\', '/')
+                    + " (" + total + " coleta(s)). O sistema comecou do zero.";
+        } catch (IOException erro) {
+            return "Nao foi possivel reiniciar os dados: " + erro.getMessage();
+        }
+    }
+
+    // Usado tambem pelo reiniciar.cmd (com o sistema desligado). Devolve a pasta do backup,
+    // ou null se nao havia nada para arquivar.
+    public static Path arquivarDados() throws IOException {
+        if (!Files.exists(DIRETORIO_DADOS)) {
+            return null;
+        }
+        ArrayList<Path> arquivos = new ArrayList<>();
+        try (Stream<Path> todos = Files.walk(DIRETORIO_DADOS)) {
+            todos.filter(Files::isRegularFile)
+                    .filter(caminho -> !caminho.startsWith(DIRETORIO_BACKUP))
+                    .filter(caminho -> {
+                        String nome = caminho.getFileName().toString().toLowerCase();
+                        return nome.equals("coletas.csv") || nome.equals("coletas.xlsx")
+                                || nome.equals("agendamentos.csv");
+                    })
+                    .forEach(arquivos::add);
+        }
+        if (arquivos.isEmpty()) {
+            return null;
+        }
+        Path destino = DIRETORIO_BACKUP.resolve(
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")));
+        for (Path origem : arquivos) {
+            Path alvo = destino.resolve(DIRETORIO_DADOS.relativize(origem));
+            Files.createDirectories(alvo.getParent());
+            Files.move(origem, alvo);
+        }
+        // remove as pastas de responsaveis que ficaram vazias (as que ainda tiverem algo ficam)
+        ArrayList<Path> pastas = new ArrayList<>();
+        try (Stream<Path> filhos = Files.list(DIRETORIO_DADOS)) {
+            filhos.filter(Files::isDirectory).filter(pasta -> !pasta.equals(DIRETORIO_BACKUP)).forEach(pastas::add);
+        }
+        for (Path pasta : pastas) {
+            try {
+                Files.deleteIfExists(pasta);
+            } catch (IOException naoVazia) {
+                // tem outros arquivos: deixa como esta
+            }
+        }
+        return destino;
     }
 
     public String agendarProximaColeta(String pessoa, String bairro, LocalDate data) {
@@ -257,6 +325,7 @@ public class SistemaAquaMap {
                 arquivos.filter(Files::isRegularFile)
                         .filter(caminho -> caminho.getFileName().toString().equalsIgnoreCase("coletas.csv"))
                         .filter(caminho -> !caminho.equals(ARQUIVO_COLETAS_ANTIGO))
+                        .filter(caminho -> !caminho.startsWith(DIRETORIO_BACKUP)) // backup nao volta para o historico
                         .forEach(this::carregarArquivoColetas);
             }
         } catch (IOException erro) {
@@ -315,6 +384,9 @@ public class SistemaAquaMap {
 
     private String nomeSeguro(String pessoa) {
         String seguro = pessoa.trim().replaceAll("[<>:\"/\\\\|?*]", "_").replace("..", "_");
+        if (seguro.equalsIgnoreCase("backup")) {
+            return "backup_"; // "backup" e a pasta reservada do comecar do zero
+        }
         return seguro.isBlank() ? "sem_nome" : seguro;
     }
 

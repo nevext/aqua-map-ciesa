@@ -12,86 +12,227 @@
     --lateral: #0b3d47;
     --lateral-hover: #0e4f5c;
     --lateral-ativo: #147a8a;
-    --fundo: #f4f7f9;
+    --fundo: #f1f5f8;
     --cartao: #fff;
     --texto: #1a2b33;
     --texto-suave: #5c6f7a;
     --verde: #2e9d4f;
     --amarelo: #c99200;
     --vermelho: #d9534f;
+    --cinza: #8a9aa3;
+    --verde-bg: #e6f5ea;
+    --amarelo-bg: #fff6dc;
+    --vermelho-bg: #fdecea;
     --borda: #dde5ea;
+    --sombra: 0 1px 2px rgba(11,61,71,.05), 0 4px 14px rgba(11,61,71,.05);
   }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: var(--fundo); color: var(--texto); }
 
   .app { display: flex; min-height: 100vh; }
 
+  /* ---------- menu lateral ---------- */
   .lateral {
     width: 240px; flex-shrink: 0; background: var(--lateral); color: #e8f4f6;
     display: flex; flex-direction: column; padding: 20px 0;
-    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 1000;
   }
   .lateral-marca { padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,.12); margin-bottom: 12px; }
-  .lateral-marca h1 { margin: 0; font-size: 1.35rem; font-weight: 700; }
+  .lateral-marca h1 { margin: 0; font-size: 1.4rem; font-weight: 700; }
   .lateral-marca p { margin: 6px 0 0; font-size: .75rem; opacity: .75; }
   .nav-btn {
-    display: block; width: 100%; text-align: left; border: none; background: transparent;
+    display: flex; gap: 10px; align-items: center; width: 100%; text-align: left; border: none; background: transparent;
     color: inherit; font: inherit; padding: 14px 20px; cursor: pointer;
     border-left: 4px solid transparent; transition: background .15s;
   }
   .nav-btn:hover { background: var(--lateral-hover); }
   .nav-btn.ativo { background: var(--lateral-ativo); border-left-color: #7ee0f0; font-weight: 600; }
+  .nav-btn .ico { width: 22px; text-align: center; }
   .lateral-rodape { margin-top: auto; padding: 16px 20px; font-size: .7rem; opacity: .65; }
 
-  .principal {
-    flex: 1; margin-left: 240px; padding: 24px 28px 32px; min-width: 0;
-  }
+  .principal { flex: 1; margin-left: 240px; padding: 24px 28px 36px; min-width: 0; }
   .tela { display: none; }
   .tela.ativa { display: block; animation: surgir .2s ease; }
   @keyframes surgir { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
-  .titulo-tela { margin: 0 0 4px; font-size: 1.5rem; color: var(--lateral); }
-  .subtitulo-tela { margin: 0 0 20px; color: var(--texto-suave); font-size: .9rem; }
+  .titulo-tela { margin: 0 0 4px; font-size: 1.6rem; color: var(--lateral); }
+  .subtitulo-tela { margin: 0 0 18px; color: var(--texto-suave); font-size: .95rem; }
 
-  .cards-topo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
-  .card-kpi {
-    background: var(--cartao); border-radius: 10px; padding: 16px 18px;
-    border: 1px solid var(--borda); box-shadow: 0 1px 2px rgba(0,0,0,.04);
-  }
-  .card-kpi .rotulo { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--texto-suave); }
-  .card-kpi .valor { font-size: 1.75rem; font-weight: 700; margin-top: 4px; color: var(--lateral); }
-  .card-kpi .detalhe { font-size: .8rem; color: var(--texto-suave); margin-top: 2px; }
-
-  .grade-visao { display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; align-items: start; }
   .painel {
-    background: var(--cartao); border-radius: 10px; padding: 16px 18px;
-    border: 1px solid var(--borda); box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    background: var(--cartao); border-radius: 14px; padding: 18px 20px;
+    border: 1px solid var(--borda); box-shadow: var(--sombra);
   }
-  .painel h3 { margin: 0 0 12px; font-size: 1rem; color: var(--lateral); }
+  .painel h3 { margin: 0; font-size: 1.05rem; color: var(--lateral); }
+  .painel-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .dica { font-size: .8rem; color: var(--texto-suave); }
+  .vazio { color: var(--texto-suave); font-style: italic; font-size: .9rem; }
 
-  #mapa { height: 380px; border-radius: 8px; }
-  .feed { max-height: 380px; overflow-y: auto; }
-  .feed-item {
-    border-left: 4px solid var(--vermelho); background: #fdf6f5; padding: 10px 12px;
-    margin-bottom: 10px; border-radius: 6px;
+  .chip {
+    display: inline-block; font-size: .72rem; font-weight: 700; padding: 3px 10px; border-radius: 99px;
+    color: #fff; white-space: nowrap; letter-spacing: .02em;
   }
-  .feed-item strong { display: block; font-size: .9rem; }
-  .feed-item small { color: var(--texto-suave); }
-  .feed-item p { margin: 6px 0 0; font-size: .85rem; line-height: 1.45; }
+  .chip.ok { background: var(--verde-bg); color: #1d7a3a; }
+  .chip.ruim { background: var(--vermelho-bg); color: #b3322e; }
+  .chip.aviso { background: var(--amarelo-bg); color: #8a6500; }
 
-  .graficos-linha { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
-  .grafico-box { background: var(--cartao); border: 1px solid var(--borda); border-radius: 10px; padding: 12px; }
-  .grafico-box h4 { margin: 0 0 8px; font-size: .85rem; color: var(--texto-suave); }
-  .grafico-box canvas { max-height: 140px; }
-  .grade-monitor { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; margin-top: 8px; }
-  .grafico-grande canvas { max-height: 280px; }
-
-  .barra-filtro { margin-bottom: 14px; }
-  .barra-filtro select { padding: 6px 10px; border-radius: 6px; border: 1px solid var(--borda); }
-
-  .cartilha {
-    max-width: 720px; line-height: 1.65; font-size: .95rem;
+  /* ---------- faixa de situacao ---------- */
+  .situacao {
+    display: flex; align-items: center; gap: 18px; padding: 20px 24px; border-radius: 16px; color: #fff;
+    margin-bottom: 16px; box-shadow: var(--sombra); transition: background .4s;
+    background: linear-gradient(110deg, #5c6f7a, #46586a);
   }
+  .situacao[data-nivel="BOA"] { background: linear-gradient(110deg, #2e9d4f, #1f7a3a); }
+  .situacao[data-nivel="REGULAR"] { background: linear-gradient(110deg, #b88700, #946b00); }
+  .situacao[data-nivel="RUIM"] { background: linear-gradient(110deg, #d9534f, #b03632); }
+  .situacao-icone { font-size: 2.6rem; line-height: 1; }
+  .situacao-texto { flex: 1; min-width: 0; }
+  .situacao-texto strong { display: block; font-size: 1.45rem; line-height: 1.25; }
+  .situacao-texto span { font-size: .95rem; opacity: .95; }
+  .situacao-aviso { font-size: .75rem; opacity: .85; max-width: 230px; text-align: right; line-height: 1.4; }
+
+  /* ---------- cartoes de numeros ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+  .kpi {
+    background: var(--cartao); border-radius: 14px; padding: 16px 18px 14px; border: 1px solid var(--borda);
+    border-top: 4px solid var(--c, var(--lateral-ativo)); box-shadow: var(--sombra);
+  }
+  .kpi .rotulo { font-size: .74rem; text-transform: uppercase; letter-spacing: .05em; color: var(--texto-suave); font-weight: 600; }
+  .kpi .valor { font-size: 2.2rem; font-weight: 800; line-height: 1.15; margin-top: 4px; color: var(--c, var(--lateral)); font-variant-numeric: tabular-nums; }
+  .kpi .detalhe { font-size: .8rem; color: var(--texto-suave); margin-top: 2px; }
+  .kpi .mini { height: 6px; background: #e6eef2; border-radius: 99px; margin-top: 10px; overflow: hidden; }
+  .kpi .mini i { display: block; height: 100%; background: var(--c); border-radius: 99px; transition: width .6s; }
+
+  /* ---------- medidor + indicadores ---------- */
+  .grade-foco { display: grid; grid-template-columns: minmax(280px, .85fr) 1.5fr; gap: 16px; margin-bottom: 16px; }
+  .gauge-caixa { text-align: center; }
+  .gauge { width: 100%; max-width: 320px; display: block; margin: 0 auto; }
+  .gauge-num { font-size: 3.2rem; font-weight: 800; line-height: 1; margin-top: -6px; font-variant-numeric: tabular-nums; }
+  .gauge-de { font-size: 1rem; font-weight: 500; color: var(--texto-suave); }
+  .gauge-formula { margin-top: 10px; font-size: .84rem; color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+  .legenda-cores { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px; }
+  .botao-link { border: none; background: none; color: var(--lateral-ativo); cursor: pointer; font: inherit; font-size: .8rem; text-decoration: underline; padding: 0; }
+
+  .ind-linha {
+    display: grid; grid-template-columns: 150px 1fr 150px; gap: 16px; align-items: center;
+    padding: 14px 0; border-bottom: 1px solid var(--borda);
+  }
+  .ind-linha:last-child { border-bottom: none; padding-bottom: 2px; }
+  .ind-nome { font-size: .85rem; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+  .ind-nome i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .ind-valor { font-size: 1.9rem; font-weight: 800; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .ind-valor small { font-size: .8rem; font-weight: 500; color: var(--texto-suave); margin-left: 3px; }
+  .ind-lado { text-align: right; }
+  .ind-nota { font-size: .8rem; color: var(--texto-suave); margin-top: 5px; font-variant-numeric: tabular-nums; }
+  .ind-nota b { color: var(--texto); font-size: .95rem; }
+
+  .trilho { position: relative; height: 16px; background: #e6eef2; border-radius: 99px; margin-top: 6px; }
+  .zona { position: absolute; top: 0; bottom: 0; min-width: 6px; background: #9fd9b0; border-radius: 99px; }
+  .marca {
+    position: absolute; top: 50%; width: 22px; height: 22px; border-radius: 50%; border: 3px solid #fff;
+    box-shadow: 0 1px 5px rgba(0,0,0,.4); transform: translate(-50%, -50%); transition: left .6s;
+  }
+  .escala { display: flex; justify-content: space-between; font-size: .7rem; color: var(--texto-suave); margin-top: 6px; }
+  .escala .ideal { color: #1d7a3a; font-weight: 600; }
+
+  /* ---------- mapa + alertas ---------- */
+  .grade-visao { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; align-items: start; }
+  #mapa { height: 470px; border-radius: 10px; z-index: 1; }
+  .pino {
+    width: 44px; height: 44px; border-radius: 50%; border: 3px solid #fff; color: #fff; font-weight: 800; font-size: .95rem;
+    display: grid; place-items: center; box-shadow: 0 2px 8px rgba(0,0,0,.4); font-variant-numeric: tabular-nums;
+  }
+  .pino.sel { box-shadow: 0 0 0 4px rgba(11,61,71,.55), 0 2px 8px rgba(0,0,0,.4); }
+  .pino.RUIM { animation: pulsar 1.6s infinite; }
+  @keyframes pulsar { 0% { box-shadow: 0 0 0 0 rgba(217,83,79,.6), 0 2px 8px rgba(0,0,0,.4); } 70% { box-shadow: 0 0 0 16px rgba(217,83,79,0), 0 2px 8px rgba(0,0,0,.4); } 100% { box-shadow: 0 0 0 0 rgba(217,83,79,0), 0 2px 8px rgba(0,0,0,.4); } }
+  .leaflet-div-icon.pino-wrap { background: none; border: none; }
+  .legenda-mapa { background: #fff; padding: 10px 12px; border-radius: 8px; box-shadow: 0 1px 6px rgba(0,0,0,.3); font-size: .78rem; line-height: 1.9; }
+  .legenda-mapa i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 7px; vertical-align: -1px; }
+
+  .feed { max-height: 470px; overflow-y: auto; padding-right: 4px; }
+  .alerta {
+    display: flex; gap: 12px; padding: 12px 14px; margin-bottom: 10px; border-radius: 10px;
+    background: #fafcfd; border: 1px solid var(--borda); border-left: 5px solid var(--c);
+  }
+  .alerta-icone { font-size: 1.5rem; line-height: 1.2; }
+  .alerta-topo { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 4px; }
+  .alerta-topo small { color: var(--texto-suave); margin-left: auto; }
+  .alerta p { margin: 4px 0 0; font-size: .86rem; line-height: 1.5; }
+  .alerta p b { color: var(--lateral); }
+
+  /* ---------- monitoramento ---------- */
+  .barra-filtro { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin-bottom: 16px; }
+  .barra-filtro label { font-weight: 600; font-size: .9rem; }
+  .barra-filtro select { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--borda); font: inherit; background: #fff; margin-left: 6px; }
+  .grafico-index { margin-bottom: 16px; }
+  .caixa-grafico { position: relative; height: 330px; }
+  .caixa-grafico.pequeno { height: 190px; }
+  .legenda-grafico { display: flex; flex-wrap: wrap; gap: 14px; font-size: .78rem; color: var(--texto-suave); margin-top: 10px; }
+  .legenda-grafico i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
+
+  .graficos-linha { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+  .graf-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .graf-valor { font-size: 1.7rem; font-weight: 800; line-height: 1.1; margin: 4px 0 10px; font-variant-numeric: tabular-nums; }
+  .graf-valor small { font-size: .8rem; font-weight: 500; color: var(--texto-suave); }
+
+  .rank-linha { display: grid; grid-template-columns: 150px 1fr 110px; gap: 12px; align-items: center; margin-bottom: 12px; font-size: .9rem; }
+  .rank-trilho { height: 20px; background: #e6eef2; border-radius: 99px; overflow: hidden; }
+  .rank-trilho i { display: block; height: 100%; border-radius: 99px; transition: width .6s; }
+  .rank-resumo { font-size: .95rem; margin: 0 0 16px; padding: 12px 14px; background: #eef6f8; border-radius: 10px; border-left: 4px solid var(--lateral-ativo); line-height: 1.5; }
+  .grade-monitor { display: grid; grid-template-columns: 1fr 1.25fr; gap: 16px; }
+
+  .tabela-rolagem { overflow-x: auto; }
+  table.tab { width: 100%; border-collapse: collapse; font-size: .88rem; font-variant-numeric: tabular-nums; }
+  table.tab th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: var(--texto-suave); padding: 8px 10px; border-bottom: 2px solid var(--borda); }
+  table.tab td { padding: 9px 10px; border-bottom: 1px solid var(--borda); }
+  table.tab td.fora { background: var(--vermelho-bg); color: #b3322e; font-weight: 700; }
+  table.tab tr:last-child td { border-bottom: none; }
+
+  /* ---------- sensor ---------- */
+  .sensor-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .campo { display: block; font-size: .85rem; font-weight: 600; color: var(--lateral); margin-bottom: 14px; }
+  .campo input {
+    display: block; width: 100%; margin-top: 6px; padding: 11px 13px; font: inherit; font-weight: 400; font-size: 1rem;
+    border: 1px solid var(--borda); border-radius: 10px; background: #fff; color: var(--texto);
+  }
+  .campo input:focus { outline: 3px solid #bfe9f0; border-color: var(--lateral-ativo); }
+  .aviso-caixa { padding: 10px 12px; border-radius: 10px; font-size: .84rem; line-height: 1.5; margin-bottom: 12px; background: var(--amarelo-bg); color: #6d5000; border-left: 4px solid var(--amarelo); }
+  .aviso-caixa.erro { background: var(--vermelho-bg); color: #8c2a26; border-left-color: var(--vermelho); }
+  .aviso-caixa.ok { background: var(--verde-bg); color: #1d6a35; border-left-color: var(--verde); }
+  .agenda { font-size: .85rem; color: var(--texto-suave); line-height: 1.5; }
+  .acao {
+    display: flex; gap: 14px; align-items: center; width: 100%; text-align: left; cursor: pointer; font: inherit;
+    padding: 16px 18px; border-radius: 12px; border: 2px solid var(--lateral-ativo); background: var(--lateral-ativo); color: #fff;
+    margin-bottom: 12px; transition: filter .15s, transform .1s;
+  }
+  .acao:hover:not(:disabled) { filter: brightness(1.08); }
+  .acao:active:not(:disabled) { transform: scale(.99); }
+  .acao.sec { background: #fff; color: var(--lateral); }
+  .acao:disabled { opacity: .45; cursor: not-allowed; }
+  .acao-ico { font-size: 1.8rem; line-height: 1; }
+  .acao strong { display: block; font-size: 1.05rem; }
+  .acao small { display: block; font-size: .8rem; opacity: .9; margin-top: 2px; line-height: 1.4; }
+  .btn-pequeno {
+    padding: 9px 16px; border-radius: 9px; border: 1px solid var(--lateral-ativo); background: var(--lateral-ativo); color: #fff;
+    font: inherit; font-size: .88rem; cursor: pointer;
+  }
+  .btn-pequeno.sec { background: #fff; color: var(--lateral); }
+  .btn-pequeno:disabled { opacity: .45; cursor: default; }
+  .btn-pequeno.perigo { background: var(--vermelho); border-color: var(--vermelho); color: #fff; }
+  .zona-dados { border-color: #f0cfcd; }
+  .confirma-reset { padding: 14px 16px; border-radius: 10px; background: var(--vermelho-bg); border-left: 4px solid var(--vermelho); font-size: .9rem; line-height: 1.5; }
+  .confirma-reset .res-acoes { margin-top: 12px; padding-top: 0; border-top: none; }
+  table.tab tr.clicavel { cursor: pointer; }
+  table.tab tr.clicavel:hover td { background: #f1f7f9; }
+  table.tab tr.selecionada td { background: #e3f1f4; font-weight: 600; }
+  .res-topo { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 6px; }
+  .res-indice { font-size: 2.6rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .res-acoes { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--borda); }
+  .log-item { display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--borda); font-size: .86rem; }
+  .log-item:last-child { border-bottom: none; }
+  .log-item time { color: var(--texto-suave); font-variant-numeric: tabular-nums; min-width: 62px; }
+
+  /* ---------- cartilha ---------- */
+  .cartilha { max-width: 760px; line-height: 1.65; font-size: .97rem; }
   .cartilha h3 { color: var(--lateral); margin-top: 1.6em; }
   .cartilha .destaque-dinamico {
     background: linear-gradient(90deg, #e0f4f8, #f0fafc); border-left: 4px solid var(--lateral-ativo);
@@ -99,17 +240,25 @@
   }
   .cartilha ul { padding-left: 1.2em; }
 
-  .vazio { color: var(--texto-suave); font-style: italic; font-size: .9rem; }
-
+  @media (max-width: 1180px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .grade-foco, .grade-visao, .grade-monitor, .graficos-linha, .sensor-grade { grid-template-columns: 1fr; }
+    .ind-linha { grid-template-columns: 1fr; gap: 8px; }
+    .ind-lado { text-align: left; }
+  }
   @media (max-width: 960px) {
     .lateral { width: 200px; }
     .principal { margin-left: 200px; padding: 16px; }
-    .grade-visao, .grade-monitor, .cards-topo, .graficos-linha { grid-template-columns: 1fr; }
+    .situacao { flex-wrap: wrap; }
+    .situacao-texto { flex: 1 1 240px; }
+    .situacao-aviso { flex: 1 1 100%; text-align: left; max-width: none; }
   }
   @media (max-width: 640px) {
     .lateral { position: relative; width: 100%; }
     .principal { margin-left: 0; }
     .app { flex-direction: column; }
+    .kpis { grid-template-columns: 1fr; }
+    .rank-linha { grid-template-columns: 1fr; gap: 4px; }
   }
 </style>
 </head>
@@ -119,79 +268,207 @@
   <aside class="lateral">
     <div class="lateral-marca">
       <h1>AquaMap</h1>
-      <p>Monitoramento da qualidade da agua</p>
+      <p>Monitoramento da qualidade da água</p>
     </div>
-    <button type="button" class="nav-btn ativo" data-tela="visao">Visao Geral</button>
-    <button type="button" class="nav-btn" data-tela="monitoramento">Monitoramento</button>
-    <button type="button" class="nav-btn" data-tela="cartilha">Cartilha Educacional</button>
+    <button type="button" class="nav-btn ativo" data-tela="visao"><span class="ico">🗺️</span>Visão Geral</button>
+    <button type="button" class="nav-btn" data-tela="monitoramento"><span class="ico">📈</span>Monitoramento</button>
+    <button type="button" class="nav-btn" data-tela="cartilha"><span class="ico">📖</span>Cartilha Educacional</button>
+    <button type="button" class="nav-btn" data-tela="sensor"><span class="ico">📡</span>Sensor</button>
     <div class="lateral-rodape">Atualiza a cada 5 s<br><span id="atualizado">—</span></div>
   </aside>
 
   <main class="principal">
 
+    <!-- ================= VISÃO GERAL ================= -->
     <section id="tela-visao" class="tela ativa">
-      <h2 class="titulo-tela">Visao Geral</h2>
-      <p class="subtitulo-tela">Operacao do dia: mapa, alertas e numeros principais.</p>
-      <div class="cards-topo">
-        <div class="card-kpi"><div class="rotulo">Comunidades</div><div class="valor" id="kpi-comunidades">—</div><div class="detalhe">Pontos no mapa</div></div>
-        <div class="card-kpi"><div class="rotulo">Alertas ativos</div><div class="valor" id="kpi-alertas">—</div><div class="detalhe">Problemas recentes</div></div>
-        <div class="card-kpi"><div class="rotulo">Ultima coleta</div><div class="valor" id="kpi-ultima" style="font-size:1.1rem">—</div><div class="detalhe" id="kpi-ultima-bairro"></div></div>
+      <h2 class="titulo-tela">Visão Geral</h2>
+      <p class="subtitulo-tela">Como está a água agora: situação, índice, indicadores, mapa e alertas.</p>
+
+      <div class="situacao" id="situacao" data-nivel="SEM">
+        <div class="situacao-icone" id="situacao-icone">⏳</div>
+        <div class="situacao-texto">
+          <strong id="situacao-titulo">Aguardando a primeira coleta</strong>
+          <span id="situacao-sub">Use a aba Sensor para enviar a primeira coleta.</span>
+        </div>
+        <div class="situacao-aviso">Classificação indicativa, baseada em 3 parâmetros. Não atesta potabilidade.</div>
       </div>
+
+      <div class="kpis">
+        <div class="kpi" style="--c:var(--lateral-ativo)">
+          <div class="rotulo">Pontos monitorados</div>
+          <div class="valor" id="kpi-pontos">—</div>
+          <div class="detalhe" id="kpi-pontos-det">comunidades no mapa</div>
+        </div>
+        <div class="kpi" style="--c:var(--verde)">
+          <div class="rotulo">Água adequada (BOA)</div>
+          <div class="valor" id="kpi-boa">—</div>
+          <div class="detalhe" id="kpi-boa-det">dos pontos com coleta</div>
+          <div class="mini"><i id="kpi-boa-barra" style="width:0"></i></div>
+        </div>
+        <div class="kpi" style="--c:var(--vermelho)">
+          <div class="rotulo">Pontos críticos (RUIM)</div>
+          <div class="valor" id="kpi-ruim">—</div>
+          <div class="detalhe" id="kpi-ruim-det">dos pontos com coleta</div>
+          <div class="mini"><i id="kpi-ruim-barra" style="width:0"></i></div>
+        </div>
+        <div class="kpi" style="--c:var(--amarelo)">
+          <div class="rotulo">Alertas ativos</div>
+          <div class="valor" id="kpi-alertas">—</div>
+          <div class="detalhe">problemas nas coletas recentes</div>
+        </div>
+      </div>
+
+      <div class="grade-foco">
+        <div class="painel gauge-caixa">
+          <div class="painel-topo">
+            <h3>Índice AquaMap</h3>
+            <span class="dica" id="foco-titulo">—</span>
+          </div>
+          <svg class="gauge" viewBox="0 0 200 128" role="img" aria-label="Medidor do índice AquaMap de 0 a 10">
+            <g id="gauge-base"></g>
+            <g id="agulha" transform="translate(100 110) rotate(0)">
+              <path d="M0,-4.5 L0,4.5 L-68,0 Z" fill="#1a2b33"/>
+            </g>
+            <circle cx="100" cy="110" r="8" fill="#1a2b33"/>
+            <circle cx="100" cy="110" r="3" fill="#fff"/>
+          </svg>
+          <div class="gauge-num" id="gauge-num" style="color:var(--cinza)">—<span class="gauge-de"> / 10</span></div>
+          <div style="margin-top:8px"><span class="chip" id="gauge-chip" style="background:var(--cinza)">SEM DADOS</span></div>
+          <div class="gauge-formula" id="gauge-formula">O índice é a média das 3 notas (pH, turbidez e temperatura).</div>
+          <div class="legenda-cores">
+            <span class="chip" style="background:var(--verde)">BOA ≥ 8</span>
+            <span class="chip" style="background:#b88700">REGULAR 5 a 8</span>
+            <span class="chip" style="background:var(--vermelho)">RUIM &lt; 5</span>
+          </div>
+          <div style="margin-top:10px"><button type="button" class="botao-link" id="foco-limpar" hidden>Voltar para a última coleta</button></div>
+        </div>
+
+        <div class="painel">
+          <div class="painel-topo">
+            <h3>Indicadores da coleta</h3>
+            <span class="dica">Faixa verde = valores adequados. A bolinha mostra o valor medido.</span>
+          </div>
+          <div id="indicadores"><p class="vazio">Sem coletas ainda.</p></div>
+          <p class="rank-resumo" style="margin:14px 0 0">Cada indicador vira uma <strong>nota de 0 a 10</strong>: quanto mais longe da faixa verde, menor a nota. O <strong>índice</strong> ao lado é a média das três notas.</p>
+        </div>
+      </div>
+
       <div class="grade-visao">
         <div class="painel">
-          <h3>Mapa das comunidades</h3>
+          <div class="painel-topo">
+            <h3>Mapa das comunidades</h3>
+            <span class="dica">Clique em um ponto para ver o índice dele ao lado.</span>
+          </div>
           <div id="mapa"></div>
           <p id="semCoordenadas" class="vazio"></p>
         </div>
         <div class="painel">
-          <h3>Alertas e recomendacoes</h3>
+          <div class="painel-topo">
+            <h3>Alertas e recomendações</h3>
+            <span class="chip aviso" id="alertas-total">0</span>
+          </div>
           <div id="alertas" class="feed"></div>
         </div>
       </div>
     </section>
 
+    <!-- ================= MONITORAMENTO ================= -->
     <section id="tela-monitoramento" class="tela">
       <h2 class="titulo-tela">Monitoramento</h2>
-      <p class="subtitulo-tela">Graficos separados por indicador — mais claro que linhas sobrepostas.</p>
+      <p class="subtitulo-tela">Como a qualidade da água evoluiu ao longo das coletas.</p>
+
       <div class="barra-filtro">
         <label>Bairro: <select id="filtroBairro"></select></label>
+        <span class="dica" id="filtro-info"></span>
       </div>
-      <div class="graficos-linha">
-        <div class="grafico-box"><h4>pH</h4><canvas id="graficoPh"></canvas></div>
-        <div class="grafico-box"><h4>Turbidez (NTU)</h4><canvas id="graficoTurbidez"></canvas></div>
-        <div class="grafico-box"><h4>Temperatura (°C)</h4><canvas id="graficoTemp"></canvas></div>
+
+      <div class="kpis" id="resumo-monitor">
+        <div class="kpi" style="--c:var(--lateral-ativo)"><div class="rotulo">Índice médio</div><div class="valor" id="m-medio">—</div><div class="detalhe" id="m-medio-det">média das coletas</div></div>
+        <div class="kpi" style="--c:var(--verde)"><div class="rotulo">Melhor coleta</div><div class="valor" id="m-melhor">—</div><div class="detalhe" id="m-melhor-det"></div></div>
+        <div class="kpi" style="--c:var(--vermelho)"><div class="rotulo">Pior coleta</div><div class="valor" id="m-pior">—</div><div class="detalhe" id="m-pior-det"></div></div>
+        <div class="kpi" style="--c:var(--amarelo)"><div class="rotulo">Tendência</div><div class="valor" id="m-tend">—</div><div class="detalhe" id="m-tend-det">última coleta vs. anterior</div></div>
       </div>
-      <div class="grade-monitor">
-        <div class="painel grafico-grande">
-          <h3>Evolucao do Indice AquaMap (0–10)</h3>
-          <canvas id="graficoIndice"></canvas>
+
+      <div class="painel" style="margin-bottom:16px">
+        <div class="painel-topo">
+          <h3>Pontos cadastrados</h3>
+          <span class="dica">Clique em uma linha para filtrar os gráficos por esse bairro</span>
         </div>
-        <div class="painel grafico-grande">
-          <h3>Ranking dos fatores de contaminacao</h3>
-          <canvas id="graficoRanking"></canvas>
+        <div class="tabela-rolagem"><div id="cadastrados"></div></div>
+      </div>
+
+      <div class="painel grafico-index">
+        <div class="painel-topo">
+          <h3>Evolução do Índice AquaMap (0 a 10)</h3>
+          <span class="dica">Cada ponto é uma coleta. Passe o mouse para ver os valores.</span>
+        </div>
+        <div class="caixa-grafico"><canvas id="graficoIndice"></canvas></div>
+        <div class="legenda-grafico">
+          <span><i style="background:rgba(46,157,79,.35)"></i>BOA (8 a 10)</span>
+          <span><i style="background:rgba(224,168,0,.4)"></i>REGULAR (5 a 8)</span>
+          <span><i style="background:rgba(217,83,79,.3)"></i>RUIM (0 a 5)</span>
+        </div>
+      </div>
+
+      <div class="graficos-linha">
+        <div class="painel">
+          <div class="graf-topo"><h3>pH</h3><span class="chip" id="g-ph-chip">—</span></div>
+          <div class="graf-valor" id="g-ph-valor">—</div>
+          <div class="caixa-grafico pequeno"><canvas id="graficoPh"></canvas></div>
+          <div class="dica" style="margin-top:8px">Faixa verde: 6,5 a 8,5</div>
+        </div>
+        <div class="painel">
+          <div class="graf-topo"><h3>Turbidez</h3><span class="chip" id="g-turbidez-chip">—</span></div>
+          <div class="graf-valor" id="g-turbidez-valor">—</div>
+          <div class="caixa-grafico pequeno"><canvas id="graficoTurbidez"></canvas></div>
+          <div class="dica" style="margin-top:8px">Faixa verde: até 5 NTU</div>
+        </div>
+        <div class="painel">
+          <div class="graf-topo"><h3>Temperatura</h3><span class="chip" id="g-temperatura-chip">—</span></div>
+          <div class="graf-valor" id="g-temperatura-valor">—</div>
+          <div class="caixa-grafico pequeno"><canvas id="graficoTemp"></canvas></div>
+          <div class="dica" style="margin-top:8px">Faixa verde: 20 a 30 °C</div>
+        </div>
+      </div>
+
+      <div class="grade-monitor">
+        <div class="painel">
+          <div class="painel-topo">
+            <h3>Ranking dos fatores de contaminação</h3>
+            <span class="dica">Todos os bairros</span>
+          </div>
+          <div id="ranking"><p class="vazio">Nenhum problema registrado.</p></div>
+        </div>
+        <div class="painel">
+          <div class="painel-topo">
+            <h3>Últimas coletas</h3>
+            <span class="dica">Células vermelhas = fora da faixa adequada</span>
+          </div>
+          <div class="tabela-rolagem"><div id="tabela"></div></div>
         </div>
       </div>
     </section>
 
+    <!-- ================= CARTILHA ================= -->
     <section id="tela-cartilha" class="tela">
       <h2 class="titulo-tela">Cartilha Educacional</h2>
-      <p class="subtitulo-tela">Conceitos, saude e regras em linguagem simples.</p>
+      <p class="subtitulo-tela">Conceitos, saúde e regras em linguagem simples.</p>
       <article class="cartilha painel">
-        <p>O AquaMap ajuda escolas e comunidades a acompanhar indicadores basicos da agua: <strong>pH</strong>, <strong>turbidez</strong> e <strong>temperatura</strong>. Os valores sozinhos nao substituem analise de laboratorio, mas orientam quando repetir a medicao ou acionar a comunidade.</p>
+        <p>O AquaMap ajuda escolas e comunidades a acompanhar indicadores básicos da água: <strong>pH</strong>, <strong>turbidez</strong> e <strong>temperatura</strong>. Os valores sozinhos não substituem análise de laboratório, mas orientam quando repetir a medição ou acionar a comunidade.</p>
 
-        <div class="destaque-dinamico" id="cartilha-dinamica">Carregando estatisticas do sistema…</div>
+        <div class="destaque-dinamico" id="cartilha-dinamica">Carregando estatísticas do sistema…</div>
 
-        <h3>Indicadores e saude</h3>
+        <h3>Indicadores e saúde</h3>
         <ul>
-          <li><strong>pH</strong> entre 6,5 e 8,5 indica faixa adequada para uso domestico. Valores fora disso podem correr com materiais da rede, solo ou descarte irregular.</li>
-          <li><strong>Turbidez</strong> mede particulas na agua. Acima de 5 NTU (referencia da Portaria GM/MS 888/2021 para agua de abastecimento) sugere filtragem e investigacao na bacia ou ponto de coleta.</li>
-          <li><strong>Temperatura</strong> alta favorece microrganismos; sombras e caixas tampadas ajudam a manter a qualidade.</li>
+          <li><strong>pH</strong> entre 6,5 e 8,5 indica faixa adequada para uso doméstico. Valores fora disso podem indicar problemas com materiais da rede, solo ou descarte irregular.</li>
+          <li><strong>Turbidez</strong> mede partículas na água. Acima de 5 NTU (referência da Portaria GM/MS 888/2021 para água de abastecimento) sugere filtragem e investigação na bacia ou no ponto de coleta.</li>
+          <li><strong>Temperatura</strong> alta favorece microrganismos; sombra e caixas tampadas ajudam a manter a qualidade.</li>
         </ul>
 
         <h3>Portaria GM/MS nº 888/2021</h3>
-        <p>Define padroes de potabilidade no Brasil. O AquaMap usa o limite de <strong>turbidez ≤ 5 NTU</strong> como referencia didatica. pH e temperatura seguem faixas adotadas no proprio projeto (6,5–8,5 e até 30 °C).</p>
+        <p>Define padrões de potabilidade no Brasil. O AquaMap usa o limite de <strong>turbidez ≤ 5 NTU</strong> como referência didática. pH e temperatura seguem faixas adotadas no próprio projeto (6,5–8,5 e até 30 °C).</p>
 
-        <h3>Indice AquaMap (0 a 10)</h3>
+        <h3>Índice AquaMap (0 a 10)</h3>
         <p>Cada indicador começa com nota <strong>10</strong> e perde pontos conforme sai da faixa adequada:</p>
         <ul>
           <li><strong>pH:</strong> perde 2 pontos para cada unidade fora da faixa 6,5–8,5.</li>
@@ -204,158 +481,721 @@
       </article>
     </section>
 
+    <!-- ================= SENSOR ================= -->
+    <section id="tela-sensor" class="tela">
+      <h2 class="titulo-tela">Sensor de coleta</h2>
+      <p class="subtitulo-tela">Envie coletas direto pelo painel, sem abrir o terminal. Cada coleta aparece na Visão Geral e no Monitoramento.</p>
+
+      <div class="sensor-grade">
+        <div class="painel">
+          <div class="painel-topo"><h3>1. Ponto de coleta</h3><span class="dica">o mesmo cadastro do terminal</span></div>
+          <label class="campo">Responsável
+            <input id="s-pessoa" type="text" maxlength="60" placeholder="Ex.: Maria Silva" autocomplete="off">
+          </label>
+          <label class="campo">Bairro / comunidade
+            <input id="s-bairro" type="text" maxlength="60" list="s-bairros" placeholder="Ex.: Tarumã" autocomplete="off">
+          </label>
+          <datalist id="s-bairros"></datalist>
+          <div class="aviso-caixa" id="s-dica" hidden></div>
+          <div class="agenda" id="s-agenda"></div>
+        </div>
+
+        <div class="painel">
+          <div class="painel-topo"><h3>2. Enviar coleta</h3><span class="dica">o sensor sorteia pH, turbidez e temperatura</span></div>
+          <button type="button" class="acao" id="s-coletar" disabled>
+            <span class="acao-ico">📡</span>
+            <span><strong>Coletar agora</strong><small>Coleta normal, com a data de hoje (a tecla Enter do terminal).</small></span>
+          </button>
+          <button type="button" class="acao sec" id="s-mes" disabled>
+            <span class="acao-ico">⏭️</span>
+            <span><strong>Simular próximo mês</strong><small>Registra a coleta com a data de 1 mês depois da anterior (a opção 0 do terminal). Use na demonstração para montar o histórico.</small></span>
+          </button>
+          <p class="dica" style="margin:4px 0 0">Valores sorteados: pH de 6 a 9, turbidez de 0,5 a 50 NTU e temperatura de 20 a 35 °C. Para usar o sensor basta o sistema estar ligado (<code>sistema.cmd</code>); o <code>sensor.cmd</code> não é mais necessário.</p>
+        </div>
+      </div>
+
+      <div class="painel" id="s-resultado-painel" hidden style="margin-bottom:16px">
+        <div class="painel-topo"><h3>Resultado da coleta</h3><span class="dica" id="s-resultado-ponto"></span></div>
+        <div id="s-resultado"></div>
+      </div>
+
+      <div class="painel">
+        <div class="painel-topo"><h3>Registro desta sessão</h3><span class="dica">o que o terminal mostrava, em ordem da mais recente</span></div>
+        <div id="s-log"><p class="vazio">Nenhuma coleta enviada ainda.</p></div>
+      </div>
+
+      <div class="painel zona-dados" style="margin-top:16px">
+        <div class="painel-topo"><h3>Começar do zero</h3><span class="dica">para limpar a demonstração</span></div>
+        <p style="margin:0 0 14px;font-size:.9rem;line-height:1.55">
+          Move todas as coletas, as planilhas (CSV e XLSX) e os agendamentos para a pasta <code>data/backup/</code>, numa subpasta com data e hora.
+          <strong>Nada é apagado</strong>: o backup fica guardado e pode ser devolvido depois. O mapa de comunidades (<code>comunidades.csv</code>) é mantido.
+          Depois disso, a Visão Geral e o Monitoramento ficam vazios até a primeira coleta nova.
+        </p>
+        <button type="button" class="btn-pequeno perigo" id="reset-pedir">🗑️ Reiniciar dados (guardando backup)</button>
+        <div class="confirma-reset" id="reset-confirma" hidden>
+          <strong>Tem certeza?</strong> Todas as coletas atuais saem do painel e vão para <code>data/backup/</code>.
+          <div class="res-acoes">
+            <button type="button" class="btn-pequeno perigo" id="reset-sim">Sim, começar do zero</button>
+            <button type="button" class="btn-pequeno sec" id="reset-nao">Cancelar</button>
+          </div>
+        </div>
+        <div class="aviso-caixa ok" id="reset-msg" hidden style="margin:14px 0 0"></div>
+      </div>
+    </section>
+
   </main>
 </div>
 
 <script>
   const CORES = { BOA: '#2e9d4f', REGULAR: '#e0a800', RUIM: '#d9534f' };
+  const COR_TEXTO = { BOA: '#2e9d4f', REGULAR: '#a87a00', RUIM: '#d9534f' };
+  const FAIXAS = {
+    ph:          { nome: 'pH',          unid: '',    cor: '#6f42c1', min: 4,  max: 10, faixa: [6.5, 8.5], peso: 2,   casas: 2, ideal: 'ideal 6,5 a 8,5' },
+    turbidez:    { nome: 'Turbidez',    unid: 'NTU', cor: '#8b5a2b', min: 0,  max: 50, faixa: [0, 5],     peso: 0.2, casas: 1, ideal: 'ideal até 5 NTU' },
+    temperatura: { nome: 'Temperatura', unid: '°C',  cor: '#e8590c', min: 15, max: 40, faixa: [20, 30],   peso: 0.5, casas: 1, ideal: 'ideal 20 a 30 °C' }
+  };
+  const FATORES = {
+    'pH acido':        { nome: 'pH ácido',         cor: '#6f42c1', icone: '🧪' },
+    'pH alcalino':     { nome: 'pH alcalino',      cor: '#a07be8', icone: '🧪' },
+    'Turbidez alta':   { nome: 'Turbidez alta',    cor: '#8b5a2b', icone: '💧' },
+    'Temperatura alta':{ nome: 'Temperatura alta', cor: '#e8590c', icone: '🌡️' },
+    'Variacao brusca': { nome: 'Variação brusca',  cor: '#147a8a', icone: '📈' }
+  };
+
   let dados = null;
+  let ultimoJson = '';
   let telaAtual = 'visao';
+  let bairroFoco = null;     // bairro escolhido no mapa (null = ultima coleta geral)
+  let vista = [];            // coletas do filtro atual (usadas nos tooltips)
 
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      telaAtual = btn.dataset.tela;
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('ativo', b === btn));
-      document.querySelectorAll('.tela').forEach(t => t.classList.toggle('ativa', t.id === 'tela-' + telaAtual));
-      if (telaAtual === 'visao') setTimeout(() => mapa.invalidateSize(), 80);
-    });
-  });
+  /* ---------- utilidades ---------- */
+  const $ = id => document.getElementById(id);
+  function esc(texto) {
+    return String(texto).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  }
+  function fmt(x, casas = 2) {
+    return x.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
+  }
+  function nomeBairro(b) { return String(b).replace(/(^|\s)\S/g, m => m.toUpperCase()); }
+  function limitar(x, a, b) { return Math.max(a, Math.min(b, x)); }
+  function classificar(v) { return v >= 8 ? 'BOA' : v >= 5 ? 'REGULAR' : 'RUIM'; }
+  function dataCurta(s) { return s.slice(0, 10); }
+  function foraDaFaixa(k, x) { return x < FAIXAS[k].faixa[0] || x > FAIXAS[k].faixa[1]; }
+  // Mesmas regras de nota do Java (SistemaAquaMap.pontuar*)
+  function nota(k, x) {
+    const f = FAIXAS[k];
+    const d = k === 'turbidez' ? x : x < f.faixa[0] ? f.faixa[0] - x : x > f.faixa[1] ? x - f.faixa[1] : 0;
+    return limitar(10 - f.peso * d, 0, 10);
+  }
+  function statusTexto(k, x) {
+    return x < FAIXAS[k].faixa[0] ? 'Abaixo da faixa' : x > FAIXAS[k].faixa[1] ? 'Acima da faixa' : 'Dentro da faixa';
+  }
 
+  /* ---------- navegação ---------- */
+  function irParaTela(nome) {
+    telaAtual = nome;
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('ativo', b.dataset.tela === nome));
+    document.querySelectorAll('.tela').forEach(t => t.classList.toggle('ativa', t.id === 'tela-' + nome));
+    if (nome === 'visao') setTimeout(() => mapa.invalidateSize(), 80);
+    if (nome === 'monitoramento') setTimeout(() => [graficoIndice, graficoPh, graficoTurbidez, graficoTemp].forEach(g => g.resize()), 80);
+  }
+  document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', () => irParaTela(btn.dataset.tela)));
+
+  /* ---------- medidor (gauge) ---------- */
+  function pontoGauge(v, r) {
+    const a = (180 - v * 18) * Math.PI / 180;
+    return [100 + r * Math.cos(a), 110 - r * Math.sin(a)];
+  }
+  function arcoGauge(v1, v2, r) {
+    const [x1, y1] = pontoGauge(v1, r), [x2, y2] = pontoGauge(v2, r);
+    return `M${x1.toFixed(2)} ${y1.toFixed(2)} A${r} ${r} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
+  }
+  (function desenharBaseGauge() {
+    const arcos = [[0, 5, CORES.RUIM], [5, 8, CORES.REGULAR], [8, 10, CORES.BOA]]
+      .map(([a, b, c]) => `<path d="${arcoGauge(a, b, 80)}" stroke="${c}" stroke-width="20" fill="none"/>`).join('');
+    const rotulos = [0, 5, 8, 10].map(v => {
+      const [x, y] = v === 0 || v === 10 ? [100 + (v === 0 ? -80 : 80), 126] : pontoGauge(v, 100);
+      return `<text x="${x.toFixed(1)}" y="${(y + 3).toFixed(1)}" text-anchor="middle" font-size="9" fill="#5c6f7a" font-weight="600">${v}</text>`;
+    }).join('');
+    $('gauge-base').innerHTML = arcos + rotulos;
+  })();
+
+  let anguloAgulha = 0, quadroAgulha = null;
+  function moverAgulha(valor) {
+    const alvo = limitar(valor, 0, 10) * 18, inicio = anguloAgulha, t0 = performance.now();
+    cancelAnimationFrame(quadroAgulha);
+    const passo = t => {
+      const k = Math.min(1, (t - t0) / 800), e = 1 - Math.pow(1 - k, 3);
+      anguloAgulha = inicio + (alvo - inicio) * e;
+      $('agulha').setAttribute('transform', `translate(100 110) rotate(${anguloAgulha})`);
+      if (k < 1) quadroAgulha = requestAnimationFrame(passo);
+    };
+    quadroAgulha = requestAnimationFrame(passo);
+  }
+
+  /* ---------- mapa ---------- */
   const mapa = L.map('mapa', { scrollWheelZoom: true }).setView([-3.10, -60.02], 11);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(mapa);
   const camadaPontos = L.layerGroup().addTo(mapa);
   let mapaCentralizado = false;
+  const legendaMapa = L.control({ position: 'bottomleft' });
+  legendaMapa.onAdd = () => {
+    const div = L.DomUtil.create('div', 'legenda-mapa');
+    div.innerHTML = `<i style="background:${CORES.BOA}"></i>BOA (≥ 8)<br><i style="background:${CORES.REGULAR}"></i>REGULAR (5 a 8)<br>`
+      + `<i style="background:${CORES.RUIM}"></i>RUIM (&lt; 5)<br><i style="background:#8a9aa3"></i>Sem coleta`;
+    return div;
+  };
+  legendaMapa.addTo(mapa);
 
-  const optsMini = { maintainAspectRatio: true, plugins: { legend: { display: false } },
-    scales: { x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 6 } } } };
-  const optsIndice = { scales: { y: { min: 0, max: 10 } } };
+  /* ---------- gráficos ---------- */
+  const pluginFaixas = {
+    id: 'faixas',
+    beforeDatasetsDraw(chart, args, opts) {
+      if (!opts || !opts.bandas) return;
+      const { ctx, chartArea: a, scales: { y } } = chart;
+      ctx.save();
+      opts.bandas.forEach(b => {
+        if (b.de >= y.max || b.ate <= y.min) return;
+        const topo = y.getPixelForValue(Math.min(b.ate, y.max));
+        const base = y.getPixelForValue(Math.max(b.de, y.min));
+        ctx.fillStyle = b.cor;
+        ctx.fillRect(a.left, topo, a.right - a.left, base - topo);
+      });
+      ctx.restore();
+    }
+  };
+  Chart.register(pluginFaixas);
+  Chart.defaults.font.family = '"Segoe UI", system-ui, sans-serif';
 
-  const graficoPh = new Chart(document.getElementById('graficoPh'), {
-    type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#6f42c1', tension: .3, borderWidth: 2 }] }, options: optsMini
-  });
-  const graficoTurbidez = new Chart(document.getElementById('graficoTurbidez'), {
-    type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#8b5a2b', tension: .3, borderWidth: 2 }] }, options: optsMini
-  });
-  const graficoTemp = new Chart(document.getElementById('graficoTemp'), {
-    type: 'line', data: { labels: [], datasets: [{ data: [], borderColor: '#e8590c', tension: .3, borderWidth: 2 }] }, options: optsMini
-  });
-  const graficoIndice = new Chart(document.getElementById('graficoIndice'), {
-    type: 'line', data: { labels: [], datasets: [{ label: 'Indice', data: [], borderColor: '#0b5e6e', tension: .3 }] }, options: optsIndice
-  });
-  const graficoRanking = new Chart(document.getElementById('graficoRanking'), {
-    type: 'bar', data: { labels: [], datasets: [{ data: [], backgroundColor: '#d9534f' }] },
-    options: { indexAxis: 'y', plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } } }
+  const BANDA_BOA = 'rgba(46,157,79,.13)';
+  function graficoIndicador(canvasId, k) {
+    const f = FAIXAS[k];
+    return new Chart($(canvasId), {
+      type: 'line',
+      data: { labels: [], datasets: [{ data: [], borderColor: f.cor, borderWidth: 2.5, tension: .25, pointRadius: 5, pointHoverRadius: 7,
+        pointBackgroundColor: [], pointBorderColor: '#fff', pointBorderWidth: 2 }] },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: { y: { suggestedMin: f.min, suggestedMax: f.max, grid: { color: '#edf2f5' } }, x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 5 }, grid: { display: false } } },
+        plugins: {
+          legend: { display: false },
+          faixas: { bandas: [{ de: f.faixa[0], ate: f.faixa[1], cor: BANDA_BOA }] },
+          tooltip: { callbacks: { title: it => vista[it[0].dataIndex] ? vista[it[0].dataIndex].data : '', label: c => `${f.nome}: ${fmt(c.parsed.y, f.casas)} ${f.unid}`.trim() } }
+        }
+      }
+    });
+  }
+  const graficoPh = graficoIndicador('graficoPh', 'ph');
+  const graficoTurbidez = graficoIndicador('graficoTurbidez', 'turbidez');
+  const graficoTemp = graficoIndicador('graficoTemp', 'temperatura');
+
+  const graficoIndice = new Chart($('graficoIndice'), {
+    type: 'line',
+    data: { labels: [], datasets: [{ data: [], borderColor: '#0b5e6e', borderWidth: 3, tension: .25, pointRadius: 8, pointHoverRadius: 10,
+      pointBackgroundColor: [], pointBorderColor: '#fff', pointBorderWidth: 3 }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { min: 0, max: 10, ticks: { stepSize: 2 }, grid: { color: 'rgba(0,0,0,.05)' } }, x: { grid: { display: false } } },
+      plugins: {
+        legend: { display: false },
+        faixas: { bandas: [
+          { de: 0, ate: 5, cor: 'rgba(217,83,79,.10)' },
+          { de: 5, ate: 8, cor: 'rgba(224,168,0,.12)' },
+          { de: 8, ate: 10, cor: 'rgba(46,157,79,.12)' }] },
+        tooltip: {
+          callbacks: {
+            title: it => { const c = vista[it[0].dataIndex]; return c ? `${c.data} · ${nomeBairro(c.bairro)}` : ''; },
+            label: c => `Índice ${fmt(c.parsed.y)} (${classificar(c.parsed.y)})`,
+            afterBody: it => { const c = vista[it[0].dataIndex]; return c
+              ? [`pH ${fmt(c.ph)}`, `Turbidez ${fmt(c.turbidez, 1)} NTU`, `Temperatura ${fmt(c.temperatura, 1)} °C`] : []; }
+          }
+        }
+      }
+    }
   });
 
-  function esc(texto) {
-    return String(texto).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  /* ---------- Visão Geral ---------- */
+  function coletaFoco() {
+    if (!dados.coletas.length) return null;
+    if (bairroFoco) {
+      for (let i = dados.coletas.length - 1; i >= 0; i--) {
+        if (dados.coletas[i].bairro.toLowerCase() === bairroFoco) return dados.coletas[i];
+      }
+    }
+    return dados.coletas[dados.coletas.length - 1];
   }
 
-  function coletasFiltradas() {
-    const bairro = document.getElementById('filtroBairro').value;
-    return dados.coletas.filter(c => !bairro || c.bairro === bairro);
+  function desenharSituacao() {
+    const comDado = dados.comunidades.filter(c => c.classificacao);
+    const total = comDado.length;
+    const conta = n => comDado.filter(c => c.classificacao === n).length;
+    const boa = conta('BOA'), reg = conta('REGULAR'), ruim = conta('RUIM');
+    const pct = n => total ? Math.round(n / total * 100) : null;
+
+    let nivel = 'SEM', icone = '⏳', titulo = 'Aguardando a primeira coleta', sub = 'Use a aba Sensor para enviar a primeira coleta.';
+    if (ruim > 0) {
+      nivel = 'RUIM'; icone = '🚨'; titulo = ruim === 1 ? 'Alerta: há 1 ponto crítico' : `Alerta: há ${ruim} pontos críticos`;
+      sub = 'Veja as recomendações ao lado e repita a coleta para confirmar.';
+    } else if (reg > 0) {
+      nivel = 'REGULAR'; icone = '⚠️'; titulo = 'Atenção: há pontos em nível REGULAR';
+      sub = `${reg} de ${total} ponto(s) pedem acompanhamento. Confira os alertas.`;
+    } else if (boa > 0) {
+      nivel = 'BOA'; icone = '💧'; titulo = 'Água adequada nos pontos monitorados';
+      sub = `Todos os ${total} ponto(s) com coleta estão classificados como BOA.`;
+    }
+    const banner = $('situacao');
+    banner.dataset.nivel = nivel;
+    $('situacao-icone').textContent = icone;
+    $('situacao-titulo').textContent = titulo;
+    $('situacao-sub').textContent = sub;
+
+    $('kpi-pontos').textContent = dados.comunidades.length;
+    $('kpi-pontos-det').textContent = total === dados.comunidades.length ? 'todos com coleta' : `${total} com coleta, ${dados.comunidades.length - total} sem`;
+    $('kpi-boa').textContent = total ? pct(boa) + '%' : '—';
+    $('kpi-boa-det').textContent = total ? `${boa} de ${total} ponto(s)` : 'sem coletas ainda';
+    $('kpi-boa-barra').style.width = (total ? pct(boa) : 0) + '%';
+    $('kpi-ruim').textContent = total ? pct(ruim) + '%' : '—';
+    $('kpi-ruim-det').textContent = total ? `${ruim} de ${total} ponto(s)` : 'sem coletas ainda';
+    $('kpi-ruim-barra').style.width = (total ? pct(ruim) : 0) + '%';
+    $('kpi-alertas').textContent = dados.alertas.length;
   }
 
-  function desenharKpis() {
-    document.getElementById('kpi-comunidades').textContent = dados.comunidades.length;
-    document.getElementById('kpi-alertas').textContent = dados.alertas.length;
-    if (dados.coletas.length === 0) {
-      document.getElementById('kpi-ultima').textContent = '—';
-      document.getElementById('kpi-ultima-bairro').textContent = 'Nenhuma coleta ainda';
+  function linhaIndicador(k, x) {
+    const f = FAIXAS[k];
+    const pos = v => (limitar(v, f.min, f.max) - f.min) / (f.max - f.min) * 100;
+    const z0 = pos(f.faixa[0]), z1 = pos(f.faixa[1]), m = pos(x);
+    const fora = foraDaFaixa(k, x), n = nota(k, x);
+    return `<div class="ind-linha">
+        <div>
+          <div class="ind-nome"><i style="background:${f.cor}"></i>${f.nome}</div>
+          <div class="ind-valor" style="color:${fora ? 'var(--vermelho)' : 'var(--verde)'}">${fmt(x, f.casas)}<small>${f.unid}</small></div>
+        </div>
+        <div>
+          <div class="trilho">
+            <div class="zona" style="left:${z0}%;width:${z1 - z0}%"></div>
+            <div class="marca" style="left:${m}%;background:${f.cor}"></div>
+          </div>
+          <div class="escala"><span>${f.min}</span><span class="ideal">${f.ideal}</span><span>${f.max}</span></div>
+        </div>
+        <div class="ind-lado">
+          <span class="chip ${fora ? 'ruim' : 'ok'}">${statusTexto(k, x)}</span>
+          <div class="ind-nota">Nota <b style="color:${COR_TEXTO[classificar(n)]}">${fmt(n, 1)}</b> de 10</div>
+        </div>
+      </div>`;
+  }
+
+  function desenharFoco() {
+    const c = coletaFoco();
+    $('foco-limpar').hidden = !bairroFoco;
+    if (!c) {
+      $('foco-titulo').textContent = 'sem coletas';
+      $('indicadores').innerHTML = '<p class="vazio">Sem coletas ainda. Envie a primeira coleta na aba Sensor para ver os indicadores.</p>';
+      $('gauge-num').innerHTML = '—<span class="gauge-de"> / 10</span>';
+      $('gauge-num').style.color = 'var(--cinza)';
+      $('gauge-chip').textContent = 'SEM DADOS';
+      $('gauge-chip').style.background = 'var(--cinza)';
+      $('gauge-formula').textContent = 'O índice é a média das 3 notas (pH, turbidez e temperatura).';
+      moverAgulha(0);
       return;
     }
-    const ult = dados.coletas[dados.coletas.length - 1];
-    document.getElementById('kpi-ultima').textContent = ult.indice.toFixed(1) + '/10';
-    document.getElementById('kpi-ultima-bairro').textContent = ult.bairro + ' · ' + ult.data;
+    const cls = classificar(c.indice);
+    $('foco-titulo').textContent = `${nomeBairro(c.bairro)} · ${dataCurta(c.data)}`;
+    $('indicadores').innerHTML = ['ph', 'turbidez', 'temperatura'].map(k => linhaIndicador(k, c[k])).join('');
+    const notas = ['ph', 'turbidez', 'temperatura'].map(k => nota(k, c[k]));
+    $('gauge-num').innerHTML = `${fmt(c.indice)}<span class="gauge-de"> / 10</span>`;
+    $('gauge-num').style.color = COR_TEXTO[cls];
+    $('gauge-chip').textContent = cls;
+    $('gauge-chip').style.background = CORES[cls];
+    $('gauge-formula').innerHTML = `Média das 3 notas: (${notas.map(n => fmt(n)).join(' + ')}) ÷ 3`;
+    moverAgulha(c.indice);
   }
 
   function desenharMapa() {
     camadaPontos.clearLayers();
-    const semCoordenadas = [];
-    const posicoes = [];
+    const semCoordenadas = [], posicoes = [];
+    const foco = coletaFoco();
+    const bairroSel = foco ? foco.bairro.toLowerCase() : null;
     dados.comunidades.forEach(c => {
       if (c.latitude === null) { semCoordenadas.push(c.bairro); return; }
-      const cor = CORES[c.classificacao] || '#999';
+      const cls = c.classificacao;
+      const cor = CORES[cls] || '#8a9aa3';
+      const sel = bairroSel && c.bairro.toLowerCase() === bairroSel;
+      const icone = L.divIcon({
+        className: 'pino-wrap', iconSize: [44, 44], iconAnchor: [22, 22],
+        html: `<div class="pino ${cls || ''} ${sel ? 'sel' : ''}" style="background:${cor}">${c.indice === null ? '?' : fmt(c.indice, 1)}</div>`
+      });
       const texto = c.indice === null
-        ? `<b>${esc(c.bairro)}</b><br>Sem coletas`
-        : `<b>${esc(c.bairro)}</b><br>${c.indice.toFixed(1)}/10 — ${c.classificacao}<br>${esc(c.data)}`;
-      L.circleMarker([c.latitude, c.longitude], { radius: 11, color: cor, fillColor: cor, fillOpacity: .75 })
-        .bindPopup(texto).addTo(camadaPontos);
+        ? `<b>${esc(nomeBairro(c.bairro))}</b><br>Sem coletas`
+        : `<b>${esc(nomeBairro(c.bairro))}</b><br>Índice ${fmt(c.indice)} — <b style="color:${COR_TEXTO[cls]}">${cls}</b><br>${esc(c.data)}`;
+      L.marker([c.latitude, c.longitude], { icon: icone }).bindPopup(texto).addTo(camadaPontos)
+        .on('click', () => { if (c.indice !== null) { bairroFoco = c.bairro.toLowerCase(); desenharFoco(); } });
       posicoes.push([c.latitude, c.longitude]);
     });
     if (!mapaCentralizado && posicoes.length > 0) {
-      mapa.fitBounds(posicoes, { maxZoom: 13, padding: [24, 24] });
+      mapa.fitBounds(posicoes, { maxZoom: 13, padding: [40, 40] });
       mapaCentralizado = true;
     }
-    document.getElementById('semCoordenadas').textContent = semCoordenadas.length
+    $('semCoordenadas').textContent = semCoordenadas.length
       ? 'Sem coordenadas em data/comunidades.csv: ' + semCoordenadas.join(', ') : '';
   }
 
   function desenharAlertas() {
-    const caixa = document.getElementById('alertas');
+    const caixa = $('alertas');
+    $('alertas-total').textContent = dados.alertas.length;
     if (dados.alertas.length === 0) {
-      caixa.innerHTML = '<p class="vazio">Nenhum alerta no momento.</p>';
+      caixa.innerHTML = '<p class="vazio">✅ Nenhum alerta no momento.</p>';
       return;
     }
-    caixa.innerHTML = dados.alertas.map(a => `
-      <div class="feed-item">
-        <strong>${esc(a.problema)} — ${esc(a.bairro)}</strong>
-        <small>${esc(a.data)}</small>
-        <p>${esc(a.recomendacao)}</p>
-      </div>`).join('');
+    caixa.innerHTML = dados.alertas.map(a => {
+      const f = FATORES[a.problema] || { nome: a.problema, cor: '#5c6f7a', icone: '⚠️' };
+      return `<div class="alerta" style="--c:${f.cor}">
+          <div class="alerta-icone">${f.icone}</div>
+          <div>
+            <div class="alerta-topo"><span class="chip" style="background:${f.cor}">${esc(f.nome)}</span><strong>${esc(nomeBairro(a.bairro))}</strong><small>${esc(dataCurta(a.data))}</small></div>
+            <p><b>O que fazer:</b> ${esc(a.recomendacao)}</p>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  $('foco-limpar').addEventListener('click', () => { bairroFoco = null; desenharFoco(); desenharMapa(); });
+
+  /* ---------- Monitoramento ---------- */
+  function coletasFiltradas() {
+    const bairro = $('filtroBairro').value;
+    return dados.coletas.filter(c => !bairro || c.bairro === bairro);
   }
 
   function atualizarFiltro() {
-    const filtro = document.getElementById('filtroBairro');
+    const filtro = $('filtroBairro');
     const escolhido = filtro.value;
     const bairros = [...new Set(dados.coletas.map(c => c.bairro))];
-    filtro.innerHTML = '<option value="">Todos</option>' + bairros.map(b => `<option value="${esc(b)}">${esc(b)}</option>`).join('');
-    filtro.value = escolhido;
+    filtro.innerHTML = '<option value="">Todos</option>' + bairros.map(b => `<option value="${esc(b)}">${esc(nomeBairro(b))}</option>`).join('');
+    filtro.value = bairros.includes(escolhido) ? escolhido : '';
   }
 
-  function desenharGraficos() {
-    const coletas = coletasFiltradas();
-    const labels = coletas.map(c => c.data);
-    const atualizarLinha = (g, vals) => { g.data.labels = labels; g.data.datasets[0].data = vals; g.update(); };
-    atualizarLinha(graficoPh, coletas.map(c => c.ph));
-    atualizarLinha(graficoTurbidez, coletas.map(c => c.turbidez));
-    atualizarLinha(graficoTemp, coletas.map(c => c.temperatura));
-    graficoIndice.data.labels = coletas.map(c => c.data + ' (' + c.bairro + ')');
-    graficoIndice.data.datasets[0].data = coletas.map(c => c.indice);
+  function cartaoResumo(id, valor, cls, det) {
+    const el = $(id);
+    el.textContent = valor;
+    el.style.color = cls ? COR_TEXTO[cls] : '';
+    if (det !== undefined) $(id + '-det').textContent = det;
+  }
+
+  function desenharResumo(v) {
+    $('filtro-info').textContent = `Mostrando ${v.length} de ${dados.coletas.length} coleta(s)`;
+    if (!v.length) {
+      ['m-medio', 'm-melhor', 'm-pior', 'm-tend'].forEach(id => cartaoResumo(id, '—', null));
+      $('m-medio-det').textContent = 'sem coletas'; $('m-melhor-det').textContent = ''; $('m-pior-det').textContent = '';
+      $('m-tend-det').textContent = 'é preciso ao menos 2 coletas';
+      return;
+    }
+    const medio = v.reduce((s, c) => s + c.indice, 0) / v.length;
+    const melhor = v.reduce((a, c) => c.indice > a.indice ? c : a);
+    const pior = v.reduce((a, c) => c.indice < a.indice ? c : a);
+    cartaoResumo('m-medio', fmt(medio), classificar(medio), `${classificar(medio)} · média de ${v.length} coleta(s)`);
+    cartaoResumo('m-melhor', fmt(melhor.indice), classificar(melhor.indice), `${dataCurta(melhor.data)} · ${nomeBairro(melhor.bairro)}`);
+    cartaoResumo('m-pior', fmt(pior.indice), classificar(pior.indice), `${dataCurta(pior.data)} · ${nomeBairro(pior.bairro)}`);
+    if (v.length < 2) { cartaoResumo('m-tend', '—', null, 'é preciso ao menos 2 coletas'); return; }
+    const d = v[v.length - 1].indice - v[v.length - 2].indice;
+    const estavel = Math.abs(d) < 0.05;
+    const el = $('m-tend');
+    el.textContent = estavel ? '＝ estável' : (d > 0 ? '▲ ' : '▼ ') + fmt(Math.abs(d));
+    el.style.color = estavel ? 'var(--texto-suave)' : d > 0 ? 'var(--verde)' : 'var(--vermelho)';
+    $('m-tend-det').textContent = estavel ? 'igual à coleta anterior' : d > 0 ? 'melhorou desde a coleta anterior' : 'piorou desde a coleta anterior';
+  }
+
+  function desenharIndicadorGrafico(g, k, v, idChip, idValor) {
+    const f = FAIXAS[k];
+    g.data.labels = v.map(c => dataCurta(c.data));
+    g.data.datasets[0].data = v.map(c => c[k]);
+    g.data.datasets[0].pointBackgroundColor = v.map(c => foraDaFaixa(k, c[k]) ? CORES.RUIM : f.cor);
+    g.update();
+    const chip = $(idChip), valor = $(idValor);
+    if (!v.length) { chip.className = 'chip'; chip.style.background = 'var(--cinza)'; chip.textContent = 'sem dados'; valor.textContent = '—'; return; }
+    const x = v[v.length - 1][k], fora = foraDaFaixa(k, x);
+    chip.style.background = ''; chip.className = 'chip ' + (fora ? 'ruim' : 'ok');
+    chip.textContent = statusTexto(k, x);
+    valor.innerHTML = `${fmt(x, f.casas)} <small>${f.unid} · última coleta</small>`;
+  }
+
+  function desenharRanking() {
+    const caixa = $('ranking');
+    if (!dados.ranking.length) { caixa.innerHTML = '<p class="vazio">✅ Nenhum problema registrado nas coletas.</p>'; return; }
+    const total = dados.coletas.length, maior = dados.ranking[0].ocorrencias;
+    const topo = FATORES[dados.ranking[0].fator] || { nome: dados.ranking[0].fator };
+    const resumo = `<p class="rank-resumo">O fator mais frequente é <strong>${esc(topo.nome)}</strong>, presente em <strong>${maior} de ${total}</strong> coleta(s).</p>`;
+    caixa.innerHTML = resumo + dados.ranking.map(r => {
+      const f = FATORES[r.fator] || { nome: r.fator, cor: '#5c6f7a' };
+      return `<div class="rank-linha">
+          <span>${esc(f.nome)}</span>
+          <div class="rank-trilho"><i style="width:${r.ocorrencias / maior * 100}%;background:${f.cor}"></i></div>
+          <strong>${r.ocorrencias} <small style="font-weight:500;color:var(--texto-suave)">(${Math.round(r.ocorrencias / total * 100)}%)</small></strong>
+        </div>`;
+    }).join('');
+  }
+
+  function desenharTabela(v) {
+    const caixa = $('tabela');
+    if (!v.length) { caixa.innerHTML = '<p class="vazio">Sem coletas ainda.</p>'; return; }
+    const linhas = v.slice(-10).reverse().map(c => {
+      const cls = classificar(c.indice);
+      const cel = k => `<td class="${foraDaFaixa(k, c[k]) ? 'fora' : ''}">${fmt(c[k], FAIXAS[k].casas)}</td>`;
+      return `<tr><td>${esc(dataCurta(c.data))}</td><td>${esc(nomeBairro(c.bairro))}</td>${cel('ph')}${cel('turbidez')}${cel('temperatura')}
+        <td><span class="chip" style="background:${CORES[cls]}">${fmt(c.indice)} · ${cls}</span></td></tr>`;
+    }).join('');
+    caixa.innerHTML = `<table class="tab"><thead><tr><th>Data</th><th>Bairro</th><th>pH</th><th>Turbidez</th><th>Temp. °C</th><th>Índice</th></tr></thead><tbody>${linhas}</tbody></table>`;
+  }
+
+  function desenharCadastrados() {
+    const caixa = $('cadastrados');
+    if (!dados.coletas.length) {
+      caixa.innerHTML = '<p class="vazio">Nenhum ponto cadastrado ainda. O cadastro é feito na aba <a href="#" id="ir-sensor">Sensor</a>: informe o responsável, o bairro e envie a primeira coleta.</p>';
+      $('ir-sensor').addEventListener('click', e => { e.preventDefault(); irParaTela('sensor'); });
+      return;
+    }
+    const grupos = new Map();
+    dados.coletas.forEach(c => {
+      const chave = c.responsavel.toLowerCase() + '|' + c.bairro.toLowerCase();
+      const g = grupos.get(chave) || { responsavel: c.responsavel, bairro: c.bairro, total: 0, ultima: null };
+      g.total++;
+      g.ultima = c;   // as coletas chegam em ordem de data: a ultima do grupo e a mais recente
+      grupos.set(chave, g);
+    });
+    const hoje = hojeIso(), filtro = $('filtroBairro').value;
+    const linhas = [...grupos.values()].map(g => {
+      const cls = classificar(g.ultima.indice);
+      const ag = dados.agendamentos.find(a => a.pessoa.toLowerCase() === g.responsavel.toLowerCase() && a.bairro.toLowerCase() === g.bairro.toLowerCase());
+      const proxima = !ag ? 'não agendada' : ag.data > hoje ? dataBr(ag.data) : `${dataBr(ag.data)} (liberada)`;
+      return `<tr class="clicavel ${filtro === g.bairro ? 'selecionada' : ''}" data-bairro="${esc(g.bairro)}">
+          <td>${esc(g.responsavel)}</td><td>${esc(nomeBairro(g.bairro))}</td><td>${g.total}</td><td>${esc(dataCurta(g.ultima.data))}</td>
+          <td><span class="chip" style="background:${CORES[cls]}">${fmt(g.ultima.indice)} · ${cls}</span></td><td>${proxima}</td></tr>`;
+    }).join('');
+    const semColeta = dados.comunidades.filter(c => !c.classificacao).map(c => nomeBairro(c.bairro));
+    caixa.innerHTML = `<table class="tab"><thead><tr><th>Responsável</th><th>Bairro</th><th>Coletas</th><th>Última coleta</th><th>Situação atual</th><th>Próxima coleta</th></tr></thead><tbody>${linhas}</tbody></table>`
+      + (semColeta.length ? `<p class="dica" style="margin:10px 0 0">No mapa, sem coletas ainda: ${esc(semColeta.join(', '))}.</p>` : '');
+    caixa.querySelectorAll('tr.clicavel').forEach(tr => tr.addEventListener('click', () => {
+      $('filtroBairro').value = tr.dataset.bairro;
+      desenharMonitor();
+    }));
+  }
+
+  function desenharMonitor() {
+    const v = coletasFiltradas();
+    vista = v;
+    desenharCadastrados();
+    desenharResumo(v);
+    const varios = new Set(v.map(c => c.bairro)).size > 1;
+    graficoIndice.data.labels = v.map(c => dataCurta(c.data) + (varios ? ' · ' + nomeBairro(c.bairro) : ''));
+    graficoIndice.data.datasets[0].data = v.map(c => c.indice);
+    graficoIndice.data.datasets[0].pointBackgroundColor = v.map(c => CORES[classificar(c.indice)]);
     graficoIndice.update();
-    graficoRanking.data.labels = dados.ranking.map(r => r.fator);
-    graficoRanking.data.datasets[0].data = dados.ranking.map(r => r.ocorrencias);
-    graficoRanking.update();
+    desenharIndicadorGrafico(graficoPh, 'ph', v, 'g-ph-chip', 'g-ph-valor');
+    desenharIndicadorGrafico(graficoTurbidez, 'turbidez', v, 'g-turbidez-chip', 'g-turbidez-valor');
+    desenharIndicadorGrafico(graficoTemp, 'temperatura', v, 'g-temperatura-chip', 'g-temperatura-valor');
+    desenharRanking();
+    desenharTabela(v);
   }
 
+  $('filtroBairro').addEventListener('change', desenharMonitor);
+
+  /* ---------- Cartilha ---------- */
   function desenharCartilha() {
-    const el = document.getElementById('cartilha-dinamica');
+    const el = $('cartilha-dinamica');
     if (!dados.comunidades.length) {
-      el.textContent = 'Ainda nao ha comunidades monitoradas. Cadastre bairros em data/comunidades.csv e faca coletas com o sensor.';
+      el.textContent = 'Ainda não há comunidades monitoradas. Cadastre bairros em data/comunidades.csv e faça coletas com o sensor.';
       return;
     }
     const comDado = dados.comunidades.filter(c => c.classificacao);
     const boa = comDado.filter(c => c.classificacao === 'BOA').length;
     const pct = comDado.length ? Math.round((boa / comDado.length) * 100) : 0;
-    const alertas = dados.alertas.length;
-    el.textContent = `Neste momento, ${pct}% dos pontos com coleta recente apresentam classificacao BOA. Ha ${alertas} alerta(s) ativo(s) no painel e ${dados.coletas.length} coleta(s) no historico.`;
+    el.textContent = `Neste momento, ${pct}% dos pontos com coleta recente apresentam classificação BOA. Há ${dados.alertas.length} alerta(s) ativo(s) no painel e ${dados.coletas.length} coleta(s) no histórico.`;
   }
 
-  document.getElementById('filtroBairro').addEventListener('change', desenharGraficos);
+  /* ---------- Sensor (substitui o SensorApp do terminal) ---------- */
+  const registroSessao = [];
+  let enviando = false;
 
+  function lerCadastro() { return { pessoa: $('s-pessoa').value.trim(), bairro: $('s-bairro').value.trim() }; }
+  function dataBr(iso) { return iso.split('-').reverse().join('/'); }
+  function hojeIso() { return new Date().toLocaleDateString('sv-SE'); }
+  // As mensagens do Java vem sem acento e com data AAAA-MM-DD: ajusta so na exibicao.
+  function amigavel(m) {
+    return String(m).replace(/(\d{4})-(\d{2})-(\d{2})(?!_)/g, '$3/$2/$1').replace(/Proxima/g, 'Próxima').replace(/proxima/g, 'próxima')
+      .replace(/\bnao\b/g, 'não').replace(/\bNao\b/g, 'Não').replace(/Indice/g, 'Índice').replace(/\bagua\b/g, 'água')
+      .replace(/comecou/g, 'começou').replace(/\bja\b/g, 'já').replace(/\besta\b/g, 'está');
+  }
+  function resumoAnomalia(a) {
+    if (a.startsWith('SIM')) return 'variação brusca em ' + a.replace(/^SIM:\s*/, '');
+    return a.startsWith('NAO AVALIADA') ? 'primeira coleta do ponto' : 'sem variação brusca';
+  }
+
+  async function postar(url, campos) {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-AquaMap': '1' },
+      body: new URLSearchParams(campos)
+    });
+    return resp.json();
+  }
+
+  function desenharSensor() {
+    if (!dados) return;
+    const { pessoa, bairro } = lerCadastro();
+    $('s-bairros').innerHTML = dados.comunidades.map(c => `<option value="${esc(nomeBairro(c.bairro))}">`).join('');
+    $('s-coletar').disabled = $('s-mes').disabled = enviando || !pessoa || !bairro;
+
+    const dica = $('s-dica');
+    const comunidade = bairro ? dados.comunidades.find(c => c.bairro.toLowerCase() === bairro.toLowerCase()) : null;
+    dica.hidden = !bairro || (comunidade && comunidade.latitude !== null);
+    if (!dica.hidden) {
+      dica.textContent = 'Este bairro ainda não tem coordenadas em data/comunidades.csv. A coleta é salva e aparece nos gráficos, mas o ponto não aparece no mapa.';
+    }
+
+    const agenda = $('s-agenda');
+    if (!pessoa || !bairro) { agenda.textContent = 'Preencha o responsável e o bairro para liberar o sensor.'; return; }
+    const ag = dados.agendamentos.find(a => a.pessoa.toLowerCase() === pessoa.toLowerCase() && a.bairro.toLowerCase() === bairro.toLowerCase());
+    if (!ag) agenda.textContent = 'Sem coleta agendada para este ponto: pode coletar à vontade.';
+    else if (ag.data > hojeIso()) agenda.innerHTML = `📅 Próxima coleta agendada para <strong>${dataBr(ag.data)}</strong>. Até lá, a coleta normal é recusada: use <strong>Simular próximo mês</strong>.`;
+    else agenda.innerHTML = `📅 A coleta agendada para <strong>${dataBr(ag.data)}</strong> já está liberada.`;
+  }
+
+  function registrarSessao(rotulo, r) {
+    registroSessao.unshift({ hora: new Date().toLocaleTimeString('pt-BR'), rotulo, ok: r.ok, texto: r.mensagem });
+    $('s-log').innerHTML = registroSessao.slice(0, 12).map(l =>
+      `<div class="log-item"><time>${l.hora}</time><span>${l.ok ? '✅' : '⚠️'}</span><span><strong>${esc(l.rotulo)}:</strong> ${esc(amigavel(l.texto))}</span></div>`).join('');
+  }
+
+  function textoAnomalia(a) {
+    if (a.startsWith('SIM')) return `⚠️ Variação brusca em relação à coleta anterior (${esc(a.replace(/^SIM:\s*/, ''))}).`;
+    if (a.startsWith('NAO AVALIADA')) return 'Primeira coleta deste ponto: ainda não há coleta anterior para comparar.';
+    return '✅ Sem variação brusca em relação à coleta anterior.';
+  }
+
+  function mostrarResultado(r, ctx) {
+    $('s-resultado-painel').hidden = false;
+    $('s-resultado-ponto').textContent = `${ctx.pessoa} · ${nomeBairro(ctx.bairro)}`;
+    const caixa = $('s-resultado');
+    if (!r.ok) {
+      const bloqueada = r.mensagem.startsWith('Coleta ainda nao liberada');
+      caixa.innerHTML = `<div class="aviso-caixa ${bloqueada ? '' : 'erro'}">${esc(amigavel(r.mensagem))}${bloqueada ? '<br>Para a demonstração, use <strong>Simular próximo mês</strong>.' : ''}</div>`;
+      return;
+    }
+    const cls = r.classificacao;
+    caixa.innerHTML = `
+      <div class="res-topo">
+        <div class="res-indice" style="color:${COR_TEXTO[cls] || 'var(--texto)'}">${fmt(r.indice)}<span class="gauge-de"> / 10</span></div>
+        <span class="chip" style="background:${CORES[cls] || '#8a9aa3'}">${esc(cls)}</span>
+      </div>
+      <p style="margin:0 0 6px;font-size:.9rem">${textoAnomalia(r.anomalia)}</p>
+      <div class="aviso-caixa ${r.planilhas ? 'ok' : 'erro'}" style="margin:8px 0 6px">${r.planilhas
+        ? `📄 Planilhas atualizadas em <code>${esc(r.pasta)}/</code>: <code>coletas.csv</code> e <code>coletas.xlsx</code> (cópia de segurança desta coleta).`
+        : `⚠️ A coleta foi registrada no painel, mas não foi possível confirmar a gravação das planilhas em <code>${esc(r.pasta)}/</code>. Veja a janela do sistema.`}</div>
+      ${['ph', 'turbidez', 'temperatura'].map(k => linhaIndicador(k, r[k])).join('')}
+      <div class="res-acoes">
+        <button type="button" class="btn-pequeno" id="s-agendar">📅 Agendar próxima coleta (daqui a 1 mês)</button>
+        <button type="button" class="btn-pequeno sec" data-ir="visao">Ver na Visão Geral</button>
+        <button type="button" class="btn-pequeno sec" data-ir="monitoramento">Ver no Monitoramento</button>
+        <span class="dica" id="s-agendar-msg"></span>
+      </div>`;
+    caixa.querySelectorAll('[data-ir]').forEach(b => b.addEventListener('click', () => irParaTela(b.dataset.ir)));
+    $('s-agendar').addEventListener('click', () => agendarProxima(ctx));
+  }
+
+  async function enviarColeta(modo) {
+    const ctx = lerCadastro();
+    if (!ctx.pessoa || !ctx.bairro || enviando) return;
+    enviando = true; desenharSensor();
+    const rotulo = modo === 'proximo_mes' ? 'Próximo mês simulado' : 'Coleta normal';
+    let r;
+    try {
+      r = await postar('/api/coleta', { pessoa: ctx.pessoa, bairro: ctx.bairro, modo });
+    } catch {
+      r = { ok: false, mensagem: 'Não foi possível falar com o sistema. Ele está ligado? (sistema.cmd)' };
+    }
+    registrarSessao(rotulo, r.ok ? { ok: true, mensagem: `Índice ${fmt(r.indice)} (${r.classificacao}), ${resumoAnomalia(r.anomalia)}.` } : r);
+    mostrarResultado(r, ctx);
+    if (r.ok) await atualizar();
+    enviando = false; desenharSensor();
+  }
+
+  async function agendarProxima(ctx) {
+    const botao = $('s-agendar'), msg = $('s-agendar-msg');
+    botao.disabled = true;
+    let r;
+    try {
+      r = await postar('/api/agendar', { pessoa: ctx.pessoa, bairro: ctx.bairro });
+    } catch {
+      r = { ok: false, mensagem: 'Não foi possível falar com o sistema. Ele está ligado? (sistema.cmd)' };
+    }
+    registrarSessao('Agendamento', r);
+    msg.textContent = (r.ok ? '✅ ' : '⚠️ ') + amigavel(r.mensagem);
+    if (!r.ok) botao.disabled = false;
+    else await atualizar();
+    desenharSensor();
+  }
+
+  try {   // lembra o ultimo cadastro neste navegador (se o armazenamento estiver bloqueado, so nao lembra)
+    const salvo = JSON.parse(localStorage.getItem('aquamap.cadastro') || 'null');
+    if (salvo) { $('s-pessoa').value = salvo.pessoa || ''; $('s-bairro').value = salvo.bairro || ''; }
+  } catch { /* sem armazenamento */ }
+  ['s-pessoa', 's-bairro'].forEach(id => $(id).addEventListener('input', () => {
+    try { localStorage.setItem('aquamap.cadastro', JSON.stringify(lerCadastro())); } catch { /* ignora */ }
+    desenharSensor();
+  }));
+  $('s-coletar').addEventListener('click', () => enviarColeta('normal'));
+  $('s-mes').addEventListener('click', () => enviarColeta('proximo_mes'));
+
+  /* ---------- Começar do zero (arquiva as planilhas em data/backup/) ---------- */
+  function mostrarConfirmacaoReset(mostrar) {
+    $('reset-confirma').hidden = !mostrar;
+    $('reset-pedir').hidden = mostrar;
+  }
+  $('reset-pedir').addEventListener('click', () => { $('reset-msg').hidden = true; mostrarConfirmacaoReset(true); });
+  $('reset-nao').addEventListener('click', () => mostrarConfirmacaoReset(false));
+  $('reset-sim').addEventListener('click', async () => {
+    $('reset-sim').disabled = true;
+    let r;
+    try {
+      r = await postar('/api/reiniciar', { confirmar: 'sim' });
+    } catch {
+      r = { ok: false, mensagem: 'Não foi possível falar com o sistema. Ele está ligado? (sistema.cmd)' };
+    }
+    $('reset-sim').disabled = false;
+    mostrarConfirmacaoReset(false);
+    const aviso = $('reset-msg');
+    aviso.className = 'aviso-caixa ' + (r.ok ? 'ok' : 'erro');
+    aviso.textContent = (r.ok ? '✅ ' : '⚠️ ') + amigavel(r.mensagem);
+    aviso.hidden = false;
+    if (!r.ok) return;
+    registroSessao.length = 0;
+    $('s-log').innerHTML = '<p class="vazio">Nenhuma coleta enviada ainda.</p>';
+    $('s-resultado-painel').hidden = true;
+    bairroFoco = null;
+    $('filtroBairro').value = '';
+    ultimoJson = '';   // forca o redesenho de todas as telas
+    await atualizar();
+  });
+
+  /* ---------- atualização ---------- */
   async function atualizar() {
     try {
       const resposta = await fetch('/api/dados');
-      dados = await resposta.json();
-      desenharKpis();
-      desenharMapa();
-      desenharAlertas();
-      atualizarFiltro();
-      desenharGraficos();
-      desenharCartilha();
-      document.getElementById('atualizado').textContent = new Date().toLocaleTimeString();
+      const texto = await resposta.text();
+      if (texto !== ultimoJson) {   // so redesenha se algo mudou: nao fecha popups nem reinicia animacoes
+        ultimoJson = texto;
+        dados = JSON.parse(texto);
+        desenharSituacao();
+        desenharFoco();
+        desenharMapa();
+        desenharAlertas();
+        atualizarFiltro();
+        desenharMonitor();
+        desenharCartilha();
+        desenharSensor();
+      }
+      $('atualizado').textContent = new Date().toLocaleTimeString();
     } catch {
-      document.getElementById('atualizado').textContent = 'Sem conexao';
+      $('atualizado').textContent = 'Sem conexão';
     }
   }
 

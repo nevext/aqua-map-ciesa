@@ -65,6 +65,23 @@ Cada alerta aparece no painel com uma recomendação preventiva (ver `RegrasQual
 
 Precisa de Java 21 e Maven.
 
+**Atalho:** rode `.\iniciar.cmd`. Ele liga o sistema numa janela própria e o painel abre no navegador. Se o sistema já estiver ligado, só abre o painel. Para encerrar, feche a janela do sistema ou rode `.\parar.cmd`.
+
+O sensor é simulado e fica **dentro do painel**, na aba **Sensor**: cadastro (responsável e bairro), coleta normal, próximo mês simulado e agendamento. Não é preciso abrir terminal para o sensor. O `sensor.cmd` continua existindo para quem preferir o terminal.
+
+## Começar do zero (limpar a demonstração)
+
+Para zerar o painel antes de uma apresentação, use **uma** destas opções:
+
+- No painel: aba **Sensor**, no fim da página, botão **Reiniciar dados (guardando backup)**.
+- No terminal: `.\reiniciar.cmd` (desliga o sistema, arquiva os dados e liga de novo).
+
+Nenhuma das duas apaga nada. As coletas, as planilhas `coletas.csv` e `coletas.xlsx` e os agendamentos são **movidos** para `data/backup/AAAA-MM-DD_HH-mm-ss/`, e o sistema recomeça vazio. O mapa de comunidades (`data/comunidades.csv`) é mantido. Para desfazer, copie os arquivos de volta de `data/backup/<pasta>/` para `data/` e reinicie o sistema. A pasta `data/backup/` não vai para o Git.
+
+As planilhas continuam sendo geradas a cada coleta e funcionam como cópia de segurança dos dados.
+
+Passo a passo manual (alternativa ao atalho):
+
 1. Terminal 1, sistema receptor e painel:
    ```
    .\sistema.cmd

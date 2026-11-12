@@ -50,6 +50,12 @@
                             <mainClass>SensorApp</mainClass>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>reiniciar</id>
+                        <configuration>
+                            <mainClass>ReiniciarApp</mainClass>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
