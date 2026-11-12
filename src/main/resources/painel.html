@@ -89,17 +89,61 @@
   .barra-filtro { margin-bottom: 14px; }
   .barra-filtro select { padding: 6px 10px; border-radius: 6px; border: 1px solid var(--borda); }
 
-  .lab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .lab-sim {
+    background: var(--cartao); border: 1px solid var(--borda); border-radius: 12px;
+    padding: 18px 20px; margin-bottom: 20px;
+  }
+  .lab-sim h3 { margin: 0 0 14px; font-size: 1rem; color: var(--lateral); }
+  .lab-controles { display: grid; grid-template-columns: repeat(3, 1fr) auto; gap: 16px; align-items: end; }
+  .lab-controles label { display: block; font-size: .8rem; color: var(--texto-suave); margin-bottom: 4px; }
+  .lab-controles input[type="range"] { width: 100%; }
+  .lab-valor { font-weight: 600; color: var(--lateral); }
+  .lab-botoes { display: flex; flex-direction: column; gap: 8px; }
+  .lab-botoes button {
+    padding: 8px 14px; border-radius: 8px; border: 1px solid var(--lateral-ativo);
+    background: var(--lateral-ativo); color: #fff; cursor: pointer; font-size: .85rem;
+  }
+  .lab-botoes button.sec { background: #fff; color: var(--lateral); }
+  .lab-botoes button:hover { filter: brightness(1.05); }
+  .lab-resumo {
+    margin-top: 16px; padding: 12px 14px; background: #e8f4f8; border-radius: 8px;
+    border-left: 4px solid var(--lateral-ativo); font-size: .9rem;
+  }
+  .lab-etapas { display: flex; gap: 0; margin-bottom: 16px; border-radius: 10px; overflow: hidden; border: 1px solid var(--borda); }
+  .etapa-btn {
+    flex: 1; padding: 14px 12px; border: none; background: #fff; cursor: pointer;
+    font-size: .82rem; text-align: center; color: var(--texto-suave); border-right: 1px solid var(--borda);
+  }
+  .etapa-btn:last-child { border-right: none; }
+  .etapa-btn.ativo { background: var(--lateral); color: #fff; font-weight: 600; }
+  .etapa-btn.done { background: #dcecef; color: var(--lateral); }
+  .lab-etapa { display: none; }
+  .lab-etapa.ativa { display: block; }
+  .lab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
   .matriz {
-    font-family: "Cambria Math", Georgia, serif; font-size: 1.05rem;
-    background: #f0f6f8; padding: 16px; border-radius: 8px; line-height: 1.8;
+    font-family: "Cambria Math", Georgia, serif; font-size: .98rem;
+    background: #f0f6f8; padding: 16px; border-radius: 8px; line-height: 1.75;
     overflow-x: auto;
   }
-  .matriz table { border-collapse: collapse; margin: 8px auto; }
-  .matriz td { padding: 4px 12px; text-align: center; }
+  .matriz table.matrix { border-collapse: collapse; margin: 10px auto; }
+  .matriz td { padding: 6px 14px; text-align: center; border: 1px solid #c5d8de; }
   .resultado-lab {
-    font-size: 1.1rem; margin-top: 12px; padding: 12px; background: #e8f8f2;
+    font-size: .95rem; margin-top: 12px; padding: 12px; background: #e8f8f2;
     border-radius: 8px; border: 1px solid #b8e6d0;
+  }
+  .lab-canvas {
+    background: #fafcfd; border: 1px solid var(--borda); border-radius: 8px;
+    display: block; width: 100%; max-width: 320px; margin: 12px auto;
+  }
+  .legenda-vetor { display: flex; gap: 16px; justify-content: center; font-size: .8rem; margin-top: 8px; }
+  .legenda-vetor span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  .legenda-vetor .antes::before { background: #3d7ea6; }
+  .legenda-vetor .depois::before { background: #e8590c; }
+  .legenda-vetor .auto::before { background: #2e9d4f; }
+  @media (max-width: 960px) {
+    .lab-controles { grid-template-columns: 1fr; }
+    .lab-grid { grid-template-columns: 1fr; }
+    .lab-etapas { flex-direction: column; }
   }
 
   .cartilha {
@@ -189,18 +233,102 @@
 
     <section id="tela-lab" class="tela">
       <h2 class="titulo-tela">Laboratorio Matematico</h2>
-      <p class="subtitulo-tela">Algebra linear aplicada a ultima coleta registrada no sistema.</p>
-      <div class="lab-grid">
-        <div class="painel">
-          <h3>Transformacao e media ponderada</h3>
-          <p class="vazio" id="lab-sem-dados">Aguardando coletas do sensor.</p>
-          <div id="lab-transform" class="matriz" hidden></div>
-          <div id="lab-indice" class="resultado-lab" hidden></div>
+      <p class="subtitulo-tela">Simule uma coleta e percorra as etapas para demonstrar algebra linear no AquaMap.</p>
+
+      <div class="lab-sim">
+        <h3>1. Simule os indicadores (pH, turbidez, temperatura)</h3>
+        <div class="lab-controles">
+          <div>
+            <label>pH <span class="lab-valor" id="lab-val-ph">7.5</span></label>
+            <input type="range" id="lab-ph" min="5" max="10" step="0.1" value="7.5">
+          </div>
+          <div>
+            <label>Turbidez (NTU) <span class="lab-valor" id="lab-val-turb">2.5</span></label>
+            <input type="range" id="lab-turb" min="0" max="50" step="0.5" value="2.5">
+          </div>
+          <div>
+            <label>Temperatura (°C) <span class="lab-valor" id="lab-val-temp">25</span></label>
+            <input type="range" id="lab-temp" min="15" max="40" step="0.5" value="25">
+          </div>
+          <div class="lab-botoes">
+            <button type="button" id="lab-rodar">Rodar simulacao</button>
+            <button type="button" class="sec" id="lab-ultima">Usar ultima coleta</button>
+            <button type="button" class="sec" id="lab-ideal">Cenario ideal</button>
+          </div>
         </div>
-        <div class="painel">
-          <h3>Produto interno e similaridade</h3>
-          <div id="lab-cosseno" class="matriz" hidden></div>
-          <div id="lab-similaridade" class="resultado-lab" hidden></div>
+        <div class="lab-resumo" id="lab-resumo">Ajuste os controles e clique em <strong>Rodar simulacao</strong>.</div>
+      </div>
+
+      <div class="lab-etapas" id="lab-etapas">
+        <button type="button" class="etapa-btn ativo" data-etapa="1">Etapa 1 — Transformacao linear</button>
+        <button type="button" class="etapa-btn" data-etapa="2">Etapa 2 — Autovalores e diagonalizacao</button>
+        <button type="button" class="etapa-btn" data-etapa="3">Etapa 3 — Produto interno</button>
+      </div>
+
+      <div id="lab-etapa-1" class="lab-etapa ativa">
+        <div class="lab-grid">
+          <div class="painel">
+            <h3>O que a transformacao faz no AquaMap</h3>
+            <p style="font-size:.88rem;color:var(--texto-suave);margin:0 0 12px">
+              O vetor bruto da coleta e padronizado com uma matriz diagonal <strong>D</strong> e a media <strong>μ</strong> do historico.
+              Depois, cada eixo vira nota 0–10 (mesmas regras do Java).
+            </p>
+            <div id="lab-t1-matriz" class="matriz"></div>
+            <div id="lab-t1-resultado" class="resultado-lab"></div>
+          </div>
+          <div class="painel">
+            <h3>Visual (plano pH × turbidez)</h3>
+            <canvas id="lab-canvas-t1" class="lab-canvas" width="300" height="300"></canvas>
+            <div class="legenda-vetor">
+              <span class="antes">Vetor bruto</span>
+              <span class="depois">Apos padronizar (D)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="lab-etapa-2" class="lab-etapa">
+        <div class="lab-grid">
+          <div class="painel">
+            <h3>Matriz de covariancia das coletas</h3>
+            <p style="font-size:.88rem;color:var(--texto-suave);margin:0 0 12px">
+              A partir do historico, montamos <strong>C</strong> (simetria). Autovalores mostram o quanto os indicadores variam juntos;
+              autovetores sao as direcoes principais. <strong>C = P Λ P<sup>T</sup></strong> (diagonalizacao).
+            </p>
+            <div id="lab-t2-matriz" class="matriz"></div>
+            <div id="lab-t2-resultado" class="resultado-lab"></div>
+          </div>
+          <div class="painel">
+            <h3>Direcoes principais (autovetores)</h3>
+            <canvas id="lab-canvas-t2" class="lab-canvas" width="300" height="300"></canvas>
+            <div class="legenda-vetor">
+              <span class="antes">Sua simulacao</span>
+              <span class="auto">Autovetor λ₁</span>
+              <span class="depois">Autovetor λ₂</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="lab-etapa-3" class="lab-etapa">
+        <div class="lab-grid">
+          <div class="painel">
+            <h3>Espaco vetorial com produto interno</h3>
+            <p style="font-size:.88rem;color:var(--texto-suave);margin:0 0 12px">
+              No espaco das <strong>notas</strong> (n), comparamos com o padrao ideal <strong>i = [10, 10, 10]</strong>
+              via produto interno e angulo.
+            </p>
+            <div id="lab-t3-matriz" class="matriz"></div>
+            <div id="lab-t3-resultado" class="resultado-lab"></div>
+          </div>
+          <div class="painel">
+            <h3>Angulo entre notas e ideal</h3>
+            <canvas id="lab-canvas-t3" class="lab-canvas" width="300" height="300"></canvas>
+            <div class="legenda-vetor">
+              <span class="auto">Vetor notas n</span>
+              <span class="antes">Vetor ideal i</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -243,6 +371,7 @@
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('ativo', b === btn));
       document.querySelectorAll('.tela').forEach(t => t.classList.toggle('ativa', t.id === 'tela-' + telaAtual));
       if (telaAtual === 'visao') setTimeout(() => mapa.invalidateSize(), 80);
+      if (telaAtual === 'lab' && labSim) renderLabEtapa(labEtapa);
     });
   });
 
@@ -374,45 +503,278 @@
     graficoRanking.update();
   }
 
-  function desenharLab() {
-    const sem = document.getElementById('lab-sem-dados');
-    const tr = document.getElementById('lab-transform');
-    const ind = document.getElementById('lab-indice');
-    const cos = document.getElementById('lab-cosseno');
-    const sim = document.getElementById('lab-similaridade');
-    if (!dados.coletas.length) {
-      sem.hidden = false; tr.hidden = ind.hidden = cos.hidden = sim.hidden = true;
-      return;
+  const IDEAL_BRUTO = [7.5, 2.5, 25];
+  const MU_PADRAO = [7.5, 5, 25];
+  const SIGMA_PADRAO = [1.2, 8, 6];
+  let labSim = null;
+  let labCov2 = null;
+  let labEtapa = 1;
+  let labEtapasVisitadas = { 1: false, 2: false, 3: false };
+
+  function classificarIndice(ind) {
+    if (ind >= 8) return 'BOA';
+    if (ind >= 5) return 'REGULAR';
+    return 'RUIM';
+  }
+
+  function mediaDesvio(vetores) {
+    const n = vetores.length || 1;
+    const mu = [0, 0, 0];
+    vetores.forEach(v => { mu[0] += v[0]; mu[1] += v[1]; mu[2] += v[2]; });
+    mu[0] /= n; mu[1] /= n; mu[2] /= n;
+    const sig = [0, 0, 0];
+    if (vetores.length > 1) {
+      vetores.forEach(v => {
+        sig[0] += (v[0] - mu[0]) ** 2;
+        sig[1] += (v[1] - mu[1]) ** 2;
+        sig[2] += (v[2] - mu[2]) ** 2;
+      });
+      sig[0] = Math.sqrt(sig[0] / (n - 1));
+      sig[1] = Math.sqrt(sig[1] / (n - 1));
+      sig[2] = Math.sqrt(sig[2] / (n - 1));
+    } else {
+      sig[0] = SIGMA_PADRAO[0]; sig[1] = SIGMA_PADRAO[1]; sig[2] = SIGMA_PADRAO[2];
     }
-    sem.hidden = true;
-    const c = dados.coletas[dados.coletas.length - 1];
-    const bruto = [c.ph, c.turbidez, c.temperatura];
-    const notas = [pontuarPH(c.ph), pontuarTurbidez(c.turbidez), pontuarTemp(c.temperatura)];
-    const pesos = [1/3, 1/3, 1/3];
-    const indice = produtoEscalar(notas, pesos);
+    sig[0] = Math.max(sig[0], 0.25);
+    sig[1] = Math.max(sig[1], 0.5);
+    sig[2] = Math.max(sig[2], 0.5);
+    return { mu, sig };
+  }
 
-    tr.hidden = false;
-    tr.innerHTML = `
-      <p><strong>Coleta:</strong> ${esc(c.bairro)} — ${esc(c.data)}</p>
-      <p>Vetor bruto <strong>v</strong> = [pH, turbidez, temp]:</p>
-      <table><tr>${bruto.map(x => `<td>${x.toFixed(2)}</td>`).join('')}</tr></table>
-      <p>Cada componente passa por uma funcao de pontuacao f<sub>i</sub> (como no Java):</p>
-      <table><tr>${notas.map(x => `<td>${x.toFixed(2)}</td>`).join('')}</tr></table>
-      <p>Indice = <strong>w</strong> · <strong>n</strong>, com <strong>w</strong> = [⅓, ⅓, ⅓]:</p>
-      <p><strong>${indice.toFixed(2)}</strong> / 10 — ${esc(c.classificacao)}</p>`;
-    ind.hidden = false;
-    ind.textContent = 'Produto escalar (media ponderada): ' + indice.toFixed(2) + ' — mesmo calculo do SistemaAquaMap.';
+  function cov2PhTurb(vetores) {
+    if (vetores.length < 2) {
+      return { c: [[1, 0.2], [0.2, 4]], n: 0, mu: [MU_PADRAO[0], MU_PADRAO[1]] };
+    }
+    const pts = vetores.map(v => [v[0], v[1]]);
+    const { mu } = mediaDesvio(vetores);
+    let c11 = 0, c22 = 0, c12 = 0;
+    const n = pts.length;
+    pts.forEach(p => {
+      const a = p[0] - mu[0], b = p[1] - mu[1];
+      c11 += a * a; c22 += b * b; c12 += a * b;
+    });
+    const f = 1 / (n - 1);
+    return { c: [[c11 * f, c12 * f], [c12 * f, c22 * f]], n, mu: [mu[0], mu[1]] };
+  }
 
-    const cosVal = cosseno(notas, AGUA_IDEAL_NOTAS);
-  const pct = Math.max(0, Math.min(100, cosVal * 100));
-    cos.hidden = false;
-    cos.innerHTML = `
-      <p><strong>n</strong> = notas da coleta, <strong>i</strong> = agua ideal [10, 10, 10]</p>
-      <p>cos(θ) = (<strong>n</strong> · <strong>i</strong>) / (‖<strong>n</strong>‖ ‖<strong>i</strong>‖)</p>
-      <p>‖<strong>n</strong>‖ = ${norma(notas).toFixed(3)}, <strong>n</strong>·<strong>i</strong> = ${produtoEscalar(notas, AGUA_IDEAL_NOTAS).toFixed(2)}</p>
-      <p>cos(θ) = <strong>${cosVal.toFixed(4)}</strong></p>`;
-    sim.hidden = false;
-    sim.textContent = 'Similaridade com o padrao ideal: ' + pct.toFixed(0) + '% (quanto mais perto de 100%, mais alinhada a amostra esta ao vetor ideal de notas).';
+  function autovalores2x2(a, b, d) {
+    const tr = a + d;
+    const det = a * d - b * b;
+    const disc = Math.max(0, tr * tr - 4 * det);
+    const r = Math.sqrt(disc);
+    return [(tr + r) / 2, (tr - r) / 2];
+  }
+
+  function autovetor2x2(m, lambda) {
+    const a = m[0][0] - lambda, b = m[0][1], c = m[1][1] - lambda;
+    let vx = b, vy = -a;
+    if (Math.abs(vx) + Math.abs(vy) < 1e-6) { vx = c; vy = -b; }
+    const n = norma([vx, vy]) || 1;
+    return [vx / n, vy / n];
+  }
+
+  function matrizHtml(rows) {
+    return '<table class="matrix">' + rows.map(r =>
+      '<tr>' + r.map(c => `<td>${c}</td>`).join('') + '</tr>'
+    ).join('') + '</table>';
+  }
+
+  function lerSimulacao() {
+    return [
+      +document.getElementById('lab-ph').value,
+      +document.getElementById('lab-turb').value,
+      +document.getElementById('lab-temp').value
+    ];
+  }
+
+  function padronizar(v, mu, sig) {
+    return [(v[0] - mu[0]) / sig[0], (v[1] - mu[1]) / sig[1], (v[2] - mu[2]) / sig[2]];
+  }
+
+  function desenharCanvasVetores(canvasId, origem, vetores, escalas) {
+    const cvs = document.getElementById(canvasId);
+    const ctx = cvs.getContext('2d');
+    const w = cvs.width, h = cvs.height;
+    const cx = w / 2, cy = h / 2;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = '#dde5ea';
+    ctx.lineWidth = 1;
+    for (let i = -3; i <= 3; i++) {
+      ctx.beginPath(); ctx.moveTo(cx + i * 35, 0); ctx.lineTo(cx + i * 35, h); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, cy + i * 35); ctx.lineTo(w, cy + i * 35); ctx.stroke();
+    }
+    ctx.strokeStyle = '#9ab';
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+    const cores = ['#3d7ea6', '#e8590c', '#2e9d4f', '#6f42c1'];
+    vetores.forEach((v, i) => {
+      const ex = v[0] * escalas, ey = -v[1] * escalas;
+      ctx.strokeStyle = cores[i % cores.length];
+      ctx.lineWidth = i === 0 ? 3 : 2;
+      ctx.beginPath();
+      ctx.moveTo(cx + origem[0], cy + origem[1]);
+      ctx.lineTo(cx + origem[0] + ex, cy + origem[1] + ey);
+      ctx.stroke();
+      ctx.fillStyle = cores[i % cores.length];
+      ctx.beginPath();
+      ctx.arc(cx + origem[0] + ex, cy + origem[1] + ey, 5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function rodarSimulacaoLab() {
+    const v = lerSimulacao();
+    const vetores = (dados && dados.coletas.length)
+      ? dados.coletas.map(c => [c.ph, c.turbidez, c.temperatura]) : [];
+    vetores.push(v);
+    const { mu, sig } = vetores.length > 1 ? mediaDesvio(vetores) : { mu: MU_PADRAO, sig: SIGMA_PADRAO };
+    const z = padronizar(v, mu, sig);
+    const notas = [pontuarPH(v[0]), pontuarTurbidez(v[1]), pontuarTemp(v[2])];
+    const indice = produtoEscalar(notas, [1/3, 1/3, 1/3]);
+    labSim = { v, z, notas, indice, mu, sig, classificacao: classificarIndice(indice) };
+    labCov2 = cov2PhTurb(vetores);
+
+    document.getElementById('lab-resumo').innerHTML =
+      `<strong>Simulado agora:</strong> pH = ${v[0].toFixed(2)}, turbidez = ${v[1].toFixed(2)} NTU, temperatura = ${v[2].toFixed(1)} °C`
+      + ` &rarr; Indice AquaMap <strong>${indice.toFixed(2)}</strong> (${labSim.classificacao}).`
+      + ` Avance pelas etapas abaixo para ver a matematica.`;
+
+    labEtapasVisitadas[labEtapa] = true;
+    renderLabEtapa(labEtapa);
+    document.querySelectorAll('.etapa-btn').forEach(btn => {
+      const e = +btn.dataset.etapa;
+      btn.classList.toggle('done', labEtapasVisitadas[e] && e !== labEtapa);
+    });
+  }
+
+  function renderLabEtapa(n) {
+    if (!labSim) return;
+    if (n === 1) renderLabEtapa1();
+    if (n === 2) renderLabEtapa2();
+    if (n === 3) renderLabEtapa3();
+  }
+
+  function renderLabEtapa1() {
+    const { v, z, notas, indice, mu, sig, classificacao } = labSim;
+    const D = diag(sig.map(s => (1 / s).toFixed(3)));
+    document.getElementById('lab-t1-matriz').innerHTML = `
+      <p><strong>v</strong> (bruto) = [${v.map(x => x.toFixed(2)).join(', ')}]</p>
+      <p><strong>μ</strong> (media do historico) = [${mu.map(x => x.toFixed(2)).join(', ')}]</p>
+      <p>Padronizacao linear: <strong>z = D (v − μ)</strong> com D diagonal:</p>
+      ${matrizHtml([[D[0][0], '0', '0'], ['0', D[1][1], '0'], ['0', '0', D[2][2]]])}
+      <p><strong>z</strong> = [${z.map(x => x.toFixed(3)).join(', ')}]</p>
+      <p>Notas (regras do Java): <strong>n</strong> = [${notas.map(x => x.toFixed(2)).join(', ')}]</p>`;
+    document.getElementById('lab-t1-resultado').textContent =
+      `Transformacao linear central no padrao μ; em seguida as funcoes f_i convertem para notas. Indice = (1/3) n·1 = ${indice.toFixed(2)} — ${classificacao}.`;
+
+    desenharCanvasVetores('lab-canvas-t1', [0, 0], [
+      [(v[0] - 7) * 0.8, (v[1] - 5) * 0.15],
+      [z[0] * 0.9, z[1] * 0.9]
+    ], 35);
+  }
+
+  function renderLabEtapa2() {
+    const { c, mu, n } = labCov2;
+    const l1 = autovalores2x2(c[0][0], c[0][1], c[1][1]);
+    const v1 = autovetor2x2(c, l1[0]);
+    const v2 = autovetor2x2(c, l1[1]);
+    const simPt = [(labSim.v[0] - mu[0]), (labSim.v[1] - mu[1])];
+
+    document.getElementById('lab-t2-matriz').innerHTML = `
+      <p>Submatriz pH × turbidez do historico (${n || 'demo'} coleta(s)):</p>
+      ${matrizHtml([
+        [c[0][0].toFixed(3), c[0][1].toFixed(3)],
+        [c[1][0].toFixed(3), c[1][1].toFixed(3)]
+      ])}
+      <p>Autovalores λ₁, λ₂: <strong>${l1[0].toFixed(3)}</strong>, <strong>${l1[1].toFixed(3)}</strong></p>
+      <p>Autovetores (colunas de P):</p>
+      ${matrizHtml([
+        [v1[0].toFixed(3), v2[0].toFixed(3)],
+        [v1[1].toFixed(3), v2[1].toFixed(3)]
+      ])}
+      <p>Diagonalizacao: <strong>C = P Λ P<sup>T</sup></strong> (λ na diagonal de Λ).</p>`;
+    document.getElementById('lab-t2-resultado').textContent =
+      'Autovetores mostram combinacoes de pH e turbidez que variam juntas no historico. Util para interpretar tendencias nas coletas reais.';
+
+    desenharCanvasVetores('lab-canvas-t2', [0, 0], [
+      [simPt[0] * 0.25, simPt[1] * 0.08],
+      [v1[0] * l1[0] * 0.15, v1[1] * l1[0] * 0.15],
+      [v2[0] * l1[1] * 0.15, v2[1] * l1[1] * 0.15]
+    ], 40);
+  }
+
+  function renderLabEtapa3() {
+    const { notas } = labSim;
+    const i = AGUA_IDEAL_NOTAS;
+    const dot = produtoEscalar(notas, i);
+    const nn = norma(notas), ni = norma(i);
+    const cos = cosseno(notas, i);
+    const pct = Math.max(0, Math.min(100, cos * 100));
+    const ang = Math.acos(Math.min(1, Math.max(-1, cos))) * 180 / Math.PI;
+
+    document.getElementById('lab-t3-matriz').innerHTML = `
+      <p><strong>n</strong> = [${notas.map(x => x.toFixed(2)).join(', ')}]  (notas da simulacao)</p>
+      <p><strong>i</strong> = [10, 10, 10]  (padrao ideal)</p>
+      <p><strong>n · i</strong> = ${dot.toFixed(2)}</p>
+      <p>‖<strong>n</strong>‖ = ${nn.toFixed(3)}, ‖<strong>i</strong>‖ = ${ni.toFixed(3)}</p>
+      <p>cos(θ) = (${dot.toFixed(2)}) / (${nn.toFixed(3)} × ${ni.toFixed(3)}) = <strong>${cos.toFixed(4)}</strong></p>
+      <p>θ ≈ ${ang.toFixed(1)}°</p>`;
+    document.getElementById('lab-t3-resultado').textContent =
+      `Similaridade geometrica com o ideal: ${pct.toFixed(0)}%. E o mesmo produto interno usado na media ponderada do indice (pesos iguais).`;
+
+    desenharCanvasVetores('lab-canvas-t3', [0, 0], [
+      [notas[0] * 0.22, notas[1] * 0.22],
+      [i[0] * 0.22, i[1] * 0.22]
+    ], 35);
+  }
+
+  function diag(vals) {
+    return [[vals[0], 0, 0], [0, vals[1], 0], [0, 0, vals[2]]];
+  }
+
+  function atualizarLabSlidersUi() {
+    ['ph', 'turb', 'temp'].forEach(k => {
+      const inp = document.getElementById('lab-' + k);
+      document.getElementById('lab-val-' + k).textContent = (+inp.value).toFixed(k === 'ph' ? 1 : k === 'turb' ? 1 : 0);
+    });
+  }
+
+  function initLab() {
+    ['lab-ph', 'lab-turb', 'lab-temp'].forEach(id => {
+      document.getElementById(id).addEventListener('input', atualizarLabSlidersUi);
+    });
+    document.getElementById('lab-rodar').addEventListener('click', rodarSimulacaoLab);
+    document.getElementById('lab-ideal').addEventListener('click', () => {
+      document.getElementById('lab-ph').value = IDEAL_BRUTO[0];
+      document.getElementById('lab-turb').value = IDEAL_BRUTO[1];
+      document.getElementById('lab-temp').value = IDEAL_BRUTO[2];
+      atualizarLabSlidersUi();
+      rodarSimulacaoLab();
+    });
+    document.getElementById('lab-ultima').addEventListener('click', () => {
+      if (!dados || !dados.coletas.length) {
+        document.getElementById('lab-resumo').textContent = 'Nenhuma coleta no sistema — use os sliders ou cenario ideal.';
+        return;
+      }
+      const c = dados.coletas[dados.coletas.length - 1];
+      document.getElementById('lab-ph').value = c.ph;
+      document.getElementById('lab-turb').value = c.turbidez;
+      document.getElementById('lab-temp').value = c.temperatura;
+      atualizarLabSlidersUi();
+      rodarSimulacaoLab();
+    });
+    document.querySelectorAll('.etapa-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        labEtapa = +btn.dataset.etapa;
+        document.querySelectorAll('.etapa-btn').forEach(b => b.classList.toggle('ativo', +b.dataset.etapa === labEtapa));
+        document.querySelectorAll('.lab-etapa').forEach(p => p.classList.toggle('ativa', p.id === 'lab-etapa-' + labEtapa));
+        if (labSim) {
+          labEtapasVisitadas[labEtapa] = true;
+          renderLabEtapa(labEtapa);
+        }
+      });
+    });
+    atualizarLabSlidersUi();
   }
 
   function desenharCartilha() {
@@ -439,7 +801,7 @@
       desenharAlertas();
       atualizarFiltro();
       desenharGraficos();
-      desenharLab();
+      if (labSim) rodarSimulacaoLab();
       desenharCartilha();
       document.getElementById('atualizado').textContent = new Date().toLocaleTimeString();
     } catch {
@@ -447,6 +809,7 @@
     }
   }
 
+  initLab();
   atualizar();
   setInterval(atualizar, 5000);
 </script>
