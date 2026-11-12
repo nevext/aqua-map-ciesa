@@ -392,6 +392,8 @@
 
       <div class="barra-filtro">
         <label>Bairro: <select id="filtroBairro"></select></label>
+        <label>Responsável: <select id="filtroResponsavel"></select></label>
+        <button type="button" class="btn-pequeno sec" id="filtro-limpar" hidden>Limpar filtros</button>
         <span class="dica" id="filtro-info"></span>
       </div>
 
@@ -405,7 +407,7 @@
       <div class="painel" style="margin-bottom:16px">
         <div class="painel-topo">
           <h3>Pontos cadastrados</h3>
-          <span class="dica">Clique em uma linha para filtrar os gráficos por esse bairro</span>
+          <span class="dica">Clique em uma linha para filtrar tudo por esse responsável e bairro (clique de novo para limpar)</span>
         </div>
         <div class="tabela-rolagem"><div id="cadastrados"></div></div>
       </div>
@@ -448,7 +450,7 @@
         <div class="painel">
           <div class="painel-topo">
             <h3>Ranking dos fatores de contaminação</h3>
-            <span class="dica">Todos os bairros</span>
+            <span class="dica" id="ranking-info">Todos os pontos</span>
           </div>
           <div id="ranking"><p class="vazio">Nenhum problema registrado.</p></div>
         </div>
@@ -717,7 +719,7 @@
           { de: 8, ate: 10, cor: 'rgba(46,157,79,.12)' }] },
         tooltip: {
           callbacks: {
-            title: it => { const c = vista[it[0].dataIndex]; return c ? `${c.data} · ${nomeBairro(c.bairro)}` : ''; },
+            title: it => { const c = vista[it[0].dataIndex]; return c ? `${c.data} · ${c.responsavel} · ${nomeBairro(c.bairro)}` : ''; },
             label: c => `Índice ${fmt(c.parsed.y)} (${classificar(c.parsed.y)})`,
             afterBody: it => { const c = vista[it[0].dataIndex]; return c
               ? [`pH ${fmt(c.ph)}`, `Turbidez ${fmt(c.turbidez, 1)} NTU`, `Temperatura ${fmt(c.temperatura, 1)} °C`] : []; }
@@ -874,17 +876,35 @@
   $('foco-limpar').addEventListener('click', () => { bairroFoco = null; desenharFoco(); desenharMapa(); });
 
   /* ---------- Monitoramento ---------- */
+  // Os filtros guardam o valor em minusculas (assim "Maria" e "maria" contam como a mesma pessoa).
   function coletasFiltradas() {
-    const bairro = $('filtroBairro').value;
-    return dados.coletas.filter(c => !bairro || c.bairro === bairro);
+    const b = $('filtroBairro').value, r = $('filtroResponsavel').value;
+    return dados.coletas.filter(c => (!b || c.bairro.toLowerCase() === b) && (!r || c.responsavel.toLowerCase() === r));
   }
 
+  // Lista de opcoes de um filtro, considerando so as coletas compatíveis com o outro filtro:
+  // escolhendo um bairro, a lista de responsaveis mostra apenas quem coletou nele (e vice-versa).
+  function opcoesDoFiltro(campo, outroCampo, outroValor) {
+    const mapa = new Map();
+    dados.coletas.filter(c => !outroValor || c[outroCampo].toLowerCase() === outroValor)
+      .forEach(c => { const k = c[campo].toLowerCase(); if (!mapa.has(k)) mapa.set(k, c[campo]); });
+    return mapa;
+  }
+  function preencherFiltro(select, mapa, formatar, atual) {
+    select.innerHTML = '<option value="">Todos</option>'
+      + [...mapa].map(([k, nome]) => `<option value="${esc(k)}">${esc(formatar(nome))}</option>`).join('');
+    select.value = mapa.has(atual) ? atual : '';
+  }
   function atualizarFiltro() {
-    const filtro = $('filtroBairro');
-    const escolhido = filtro.value;
-    const bairros = [...new Set(dados.coletas.map(c => c.bairro))];
-    filtro.innerHTML = '<option value="">Todos</option>' + bairros.map(b => `<option value="${esc(b)}">${esc(nomeBairro(b))}</option>`).join('');
-    filtro.value = bairros.includes(escolhido) ? escolhido : '';
+    const sb = $('filtroBairro'), sr = $('filtroResponsavel');
+    preencherFiltro(sb, opcoesDoFiltro('bairro', 'responsavel', sr.value), nomeBairro, sb.value);
+    preencherFiltro(sr, opcoesDoFiltro('responsavel', 'bairro', sb.value), nome => nome, sr.value);
+  }
+  function descricaoFiltro() {
+    const b = $('filtroBairro'), r = $('filtroResponsavel'), partes = [];
+    if (b.value) partes.push('bairro ' + b.selectedOptions[0].textContent);
+    if (r.value) partes.push('responsável ' + r.selectedOptions[0].textContent);
+    return partes.length ? 'Filtro: ' + partes.join(' · ') : 'Todos os pontos';
   }
 
   function cartaoResumo(id, valor, cls, det) {
@@ -896,6 +916,7 @@
 
   function desenharResumo(v) {
     $('filtro-info').textContent = `Mostrando ${v.length} de ${dados.coletas.length} coleta(s)`;
+    $('filtro-limpar').hidden = !($('filtroBairro').value || $('filtroResponsavel').value);
     if (!v.length) {
       ['m-medio', 'm-melhor', 'm-pior', 'm-tend'].forEach(id => cartaoResumo(id, '—', null));
       $('m-medio-det').textContent = 'sem coletas'; $('m-melhor-det').textContent = ''; $('m-pior-det').textContent = '';
@@ -931,13 +952,21 @@
     valor.innerHTML = `${fmt(x, f.casas)} <small>${f.unid} · última coleta</small>`;
   }
 
-  function desenharRanking() {
+  // O ranking segue o filtro: conta os problemas so das coletas que estao sendo mostradas.
+  function desenharRanking(v) {
     const caixa = $('ranking');
-    if (!dados.ranking.length) { caixa.innerHTML = '<p class="vazio">✅ Nenhum problema registrado nas coletas.</p>'; return; }
-    const total = dados.coletas.length, maior = dados.ranking[0].ocorrencias;
-    const topo = FATORES[dados.ranking[0].fator] || { nome: dados.ranking[0].fator };
+    $('ranking-info').textContent = descricaoFiltro();
+    const contagem = new Map();
+    v.forEach(c => (c.problemas || []).forEach(p => contagem.set(p, (contagem.get(p) || 0) + 1)));
+    const ranking = [...contagem].sort((a, b) => b[1] - a[1]).map(([fator, ocorrencias]) => ({ fator, ocorrencias }));
+    if (!ranking.length) {
+      caixa.innerHTML = v.length ? '<p class="vazio">✅ Nenhum problema registrado nestas coletas.</p>' : '<p class="vazio">Sem coletas ainda.</p>';
+      return;
+    }
+    const total = v.length, maior = ranking[0].ocorrencias;
+    const topo = FATORES[ranking[0].fator] || { nome: ranking[0].fator };
     const resumo = `<p class="rank-resumo">O fator mais frequente é <strong>${esc(topo.nome)}</strong>, presente em <strong>${maior} de ${total}</strong> coleta(s).</p>`;
-    caixa.innerHTML = resumo + dados.ranking.map(r => {
+    caixa.innerHTML = resumo + ranking.map(r => {
       const f = FATORES[r.fator] || { nome: r.fator, cor: '#5c6f7a' };
       return `<div class="rank-linha">
           <span>${esc(f.nome)}</span>
@@ -953,10 +982,10 @@
     const linhas = v.slice(-10).reverse().map(c => {
       const cls = classificar(c.indice);
       const cel = k => `<td class="${foraDaFaixa(k, c[k]) ? 'fora' : ''}">${fmt(c[k], FAIXAS[k].casas)}</td>`;
-      return `<tr><td>${esc(dataCurta(c.data))}</td><td>${esc(nomeBairro(c.bairro))}</td>${cel('ph')}${cel('turbidez')}${cel('temperatura')}
+      return `<tr><td>${esc(dataCurta(c.data))}</td><td>${esc(c.responsavel)}</td><td>${esc(nomeBairro(c.bairro))}</td>${cel('ph')}${cel('turbidez')}${cel('temperatura')}
         <td><span class="chip" style="background:${CORES[cls]}">${fmt(c.indice)} · ${cls}</span></td></tr>`;
     }).join('');
-    caixa.innerHTML = `<table class="tab"><thead><tr><th>Data</th><th>Bairro</th><th>pH</th><th>Turbidez</th><th>Temp. °C</th><th>Índice</th></tr></thead><tbody>${linhas}</tbody></table>`;
+    caixa.innerHTML = `<table class="tab"><thead><tr><th>Data</th><th>Responsável</th><th>Bairro</th><th>pH</th><th>Turbidez</th><th>Temp. °C</th><th>Índice</th></tr></thead><tbody>${linhas}</tbody></table>`;
   }
 
   function desenharCadastrados() {
@@ -974,12 +1003,13 @@
       g.ultima = c;   // as coletas chegam em ordem de data: a ultima do grupo e a mais recente
       grupos.set(chave, g);
     });
-    const hoje = hojeIso(), filtro = $('filtroBairro').value;
+    const hoje = hojeIso(), fb = $('filtroBairro').value, fr = $('filtroResponsavel').value;
     const linhas = [...grupos.values()].map(g => {
+      const selecionada = (fb || fr) && (!fb || g.bairro.toLowerCase() === fb) && (!fr || g.responsavel.toLowerCase() === fr);
       const cls = classificar(g.ultima.indice);
       const ag = dados.agendamentos.find(a => a.pessoa.toLowerCase() === g.responsavel.toLowerCase() && a.bairro.toLowerCase() === g.bairro.toLowerCase());
       const proxima = !ag ? 'não agendada' : ag.data > hoje ? dataBr(ag.data) : `${dataBr(ag.data)} (liberada)`;
-      return `<tr class="clicavel ${filtro === g.bairro ? 'selecionada' : ''}" data-bairro="${esc(g.bairro)}">
+      return `<tr class="clicavel ${selecionada ? 'selecionada' : ''}" data-bairro="${esc(g.bairro.toLowerCase())}" data-resp="${esc(g.responsavel.toLowerCase())}">
           <td>${esc(g.responsavel)}</td><td>${esc(nomeBairro(g.bairro))}</td><td>${g.total}</td><td>${esc(dataCurta(g.ultima.data))}</td>
           <td><span class="chip" style="background:${CORES[cls]}">${fmt(g.ultima.indice)} · ${cls}</span></td><td>${proxima}</td></tr>`;
     }).join('');
@@ -987,7 +1017,15 @@
     caixa.innerHTML = `<table class="tab"><thead><tr><th>Responsável</th><th>Bairro</th><th>Coletas</th><th>Última coleta</th><th>Situação atual</th><th>Próxima coleta</th></tr></thead><tbody>${linhas}</tbody></table>`
       + (semColeta.length ? `<p class="dica" style="margin:10px 0 0">No mapa, sem coletas ainda: ${esc(semColeta.join(', '))}.</p>` : '');
     caixa.querySelectorAll('tr.clicavel').forEach(tr => tr.addEventListener('click', () => {
-      $('filtroBairro').value = tr.dataset.bairro;
+      // clicar de novo na linha ja escolhida limpa o filtro
+      const jaEscolhida = $('filtroBairro').value === tr.dataset.bairro && $('filtroResponsavel').value === tr.dataset.resp;
+      $('filtroBairro').value = ''; $('filtroResponsavel').value = '';
+      atualizarFiltro();   // lista completa de novo, para a opcao escolhida existir nos dois filtros
+      if (!jaEscolhida) {
+        $('filtroBairro').value = tr.dataset.bairro;
+        $('filtroResponsavel').value = tr.dataset.resp;
+        atualizarFiltro();
+      }
       desenharMonitor();
     }));
   }
@@ -1005,11 +1043,15 @@
     desenharIndicadorGrafico(graficoPh, 'ph', v, 'g-ph-chip', 'g-ph-valor');
     desenharIndicadorGrafico(graficoTurbidez, 'turbidez', v, 'g-turbidez-chip', 'g-turbidez-valor');
     desenharIndicadorGrafico(graficoTemp, 'temperatura', v, 'g-temperatura-chip', 'g-temperatura-valor');
-    desenharRanking();
+    desenharRanking(v);
     desenharTabela(v);
   }
 
-  $('filtroBairro').addEventListener('change', desenharMonitor);
+  ['filtroBairro', 'filtroResponsavel'].forEach(id => $(id).addEventListener('change', () => { atualizarFiltro(); desenharMonitor(); }));
+  $('filtro-limpar').addEventListener('click', () => {
+    $('filtroBairro').value = ''; $('filtroResponsavel').value = '';
+    atualizarFiltro(); desenharMonitor();
+  });
 
   /* ---------- Cartilha ---------- */
   function desenharCartilha() {
@@ -1205,6 +1247,7 @@
     $('s-resultado-painel').hidden = true;
     bairroFoco = null;
     $('filtroBairro').value = '';
+    $('filtroResponsavel').value = '';
     ultimoJson = '';   // forca o redesenho de todas as telas
     await atualizar();
   });

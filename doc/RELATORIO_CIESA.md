@@ -191,9 +191,10 @@ O painel tem um menu lateral com quatro telas. A página consulta `/api/dados` a
 - **Alertas e recomendações preventivas:** os problemas das coletas mais recentes (até 15), cada um com a orientação "o que fazer".
 
 **Monitoramento** (evolução no tempo):
-- **Pontos cadastrados:** responsável, bairro, número de coletas, última coleta, situação atual e próxima coleta agendada; clicar numa linha filtra os gráficos por esse bairro;
+- **Filtros por bairro e por responsável:** as duas listas se afunilam (ao escolher um bairro, a lista de responsáveis mostra só quem coletou nele, e vice-versa) e valem para o resumo, os gráficos, o ranking e a tabela de últimas coletas; há um botão para limpar os filtros;
+- **Pontos cadastrados:** responsável, bairro, número de coletas, última coleta, situação atual e próxima coleta agendada; clicar numa linha filtra tudo por esse responsável e bairro, e clicar de novo limpa;
 - **Resumo:** índice médio, melhor coleta, pior coleta e tendência em relação à coleta anterior;
-- **Evolução do índice** com fundo dividido nas faixas BOA, REGULAR e RUIM, e **filtro por bairro**;
+- **Evolução do índice** com fundo dividido nas faixas BOA, REGULAR e RUIM;
 - **Gráficos de pH, turbidez e temperatura** com a faixa adequada sombreada e os pontos fora dela em vermelho;
 - **Ranking dos fatores de contaminação** (quantas coletas tiveram cada problema) e **tabela das últimas coletas**.
 
@@ -225,7 +226,7 @@ Os testes foram funcionais e manuais (não há testes automatizados): execução
 
 ## 7. RESULTADOS
 
-> Os casos 1 a 14 foram executados em 28/10/2026 e os casos 15 a 31 em 12/11/2026, em um computador local, com os **dados sintéticos** existentes em `data/david/coletas.csv`. Nos casos 15 a 31, os dados criados pelos testes (responsáveis de teste) foram removidos ao final e os dados originais foram restaurados.
+> Os casos 1 a 14 foram executados em 28/10/2026 e os casos 15 a 32 em 12/11/2026, em um computador local, com os **dados sintéticos** existentes em `data/david/coletas.csv`. Nos casos 15 a 31, os dados criados pelos testes (responsáveis de teste) foram removidos ao final e os dados originais foram restaurados. O caso 32 usou, além dos dados de `david`, uma coleta de outro responsável (`JP`, bairro "Jorge Texas") registrada pela aba Sensor; essa coleta não faz parte da tabela 7.3.
 
 ### 7.1 Casos de teste
 
@@ -262,8 +263,9 @@ Os testes foram funcionais e manuais (não há testes automatizados): execução
 | 29 | `reiniciar.cmd`, resposta N | Responder N | Nada alterado | "Cancelado. Nada foi alterado."; mesmo número de arquivos em `data/` | OK |
 | 30 | `reiniciar.cmd`, resposta S | Responder S | Arquivar e religar o sistema | Dados arquivados, painel no ar e 0 coletas no sistema | OK |
 | 31 | `iniciar.cmd` com o sistema já ligado | Rodar o script | Abrir só o painel, sem segunda cópia | Terminou sem erro e sem abrir janela de sensor; painel segue no ar (HTTP 200) | OK |
+| 32 | Filtros por bairro e por responsável (2 responsáveis e 2 bairros) | Escolher o bairro `taruma`; depois o responsável `JP`; depois limpar | Listas afuniladas, resumo e ranking só com as coletas do filtro; limpar volta ao total | Com `taruma`, a lista de responsáveis ficou só com `david` ("4 de 5 coletas"); com `JP`, a de bairros ficou só com `Jorge Texas` ("1 de 5") e o ranking mostrou só os 3 problemas dele; limpar voltou a "5 de 5" | OK |
 
-**Taxa de sucesso:** 31 de 31 casos (100%).
+**Taxa de sucesso:** 32 de 32 casos (100%).
 
 ### 7.2 Tempo de resposta
 
@@ -288,7 +290,7 @@ Ranking gerado: turbidez alta (3), variação brusca (3), pH alcalino (2), tempe
 ### 7.4 Avaliação cartográfica
 
 - **Posicionamento:** o Tarumã aparece no mapa, mas a API arredonda as coordenadas para duas casas decimais (−3,0150 vira −3,02). Isso desloca o ponto em até cerca de 500 m: serve para indicar o bairro, não um ponto exato de coleta.
-- **Filtros:** o filtro por bairro funciona (pela lista e também clicando em uma linha da tabela de pontos cadastrados). Não há filtro por período nem por parâmetro.
+- **Filtros:** os filtros por bairro e por responsável funcionam (pelas listas e também clicando em uma linha da tabela de pontos cadastrados), e o ranking acompanha o filtro escolhido. Não há filtro por período nem por parâmetro.
 - **Legendas:** o mapa tem uma legenda com as cores verde (BOA), amarelo (REGULAR), vermelho (RUIM) e cinza (sem coleta), e cada pino mostra o índice escrito. Sem coletas, o pino do bairro aparece em cinza com "?".
 
 ### 7.5 Problemas identificados
@@ -308,7 +310,7 @@ Como os dados são sintéticos e só três parâmetros são medidos, **nenhum re
 
 ## 8. CONCLUSÃO
 
-O AquaMap cumpriu o objetivo de organizar medições de qualidade da água e apresentá-las de forma compreensível, rastreável e georreferenciada. O protótipo recebe coletas por rede ou pela aba Sensor do próprio painel, calcula o Índice AquaMap por produto escalar, detecta variações bruscas pelo vetor diferença, guarda o histórico em CSV e XLSX (notificando quando as planilhas são criadas ou atualizadas) e exibe mapa, gráficos, ranking, alertas e recomendações em um painel web. Também permite começar do zero guardando uma cópia de segurança em `data/backup/`. Os 31 casos de teste foram atendidos, o painel respondeu em cerca de 3 ms e o índice calculado coincidiu com o cálculo manual, mostrando na prática a aplicação de conceitos de Álgebra Linear.
+O AquaMap cumpriu o objetivo de organizar medições de qualidade da água e apresentá-las de forma compreensível, rastreável e georreferenciada. O protótipo recebe coletas por rede ou pela aba Sensor do próprio painel, calcula o Índice AquaMap por produto escalar, detecta variações bruscas pelo vetor diferença, guarda o histórico em CSV e XLSX (notificando quando as planilhas são criadas ou atualizadas) e exibe mapa, gráficos, ranking, alertas e recomendações em um painel web. Também permite começar do zero guardando uma cópia de segurança em `data/backup/`. Os 32 casos de teste foram atendidos, o painel respondeu em cerca de 3 ms e o índice calculado coincidiu com o cálculo manual, mostrando na prática a aplicação de conceitos de Álgebra Linear.
 
 O trabalho tem limitações importantes. Os resultados dependem da qualidade das medições, e o sensor atual é simulado. O painel depende de conexão com a internet. A representatividade espacial é limitada: há um ponto por bairro, com coordenadas arredondadas. A média ponderada pode classificar como BOA uma coleta com um indicador fora do limite. Os valores do sensor são sempre sorteados e não há login nem perfis de acesso. Não houve avaliação com usuários. Por tudo isso, o sistema não substitui a análise laboratorial nem declara a potabilidade da água.
 

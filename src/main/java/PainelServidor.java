@@ -295,8 +295,18 @@ public class PainelServidor {
                     + "\"turbidez\":" + numero(coleta.getTurbidez()) + ","
                     + "\"temperatura\":" + numero(coleta.getTemperatura()) + ","
                     + "\"indice\":" + numero(coleta.getQualidade()) + ","
-                    + "\"classificacao\":" + texto(coleta.getClassificacao())
+                    + "\"classificacao\":" + texto(coleta.getClassificacao()) + ","
+                    + "\"problemas\":" + listaDeTextos(RegrasQualidade.problemas(coleta))
                     + "}");
+        }
+        return "[" + String.join(",", itens) + "]";
+    }
+
+    // ["a","b"]: usado para o painel montar o ranking so com as coletas do filtro escolhido.
+    private String listaDeTextos(List<String> valores) {
+        List<String> itens = new ArrayList<>();
+        for (String valor : valores) {
+            itens.add(texto(valor));
         }
         return "[" + String.join(",", itens) + "]";
     }
