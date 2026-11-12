@@ -27,7 +27,7 @@ MANAUS – AM
 
 ## RESUMO
 
-A falta de informação acessível sobre a qualidade da água é um problema comum em comunidades urbanas e periféricas, onde muitas vezes não há acompanhamento contínuo dos parâmetros básicos. Este trabalho apresenta o AquaMap, um sistema computacional que organiza medições de qualidade da água e as apresenta de forma compreensível, rastreável e georreferenciada. O objetivo foi desenvolver um protótipo capaz de receber coletas de pH, turbidez e temperatura, calcular um índice de qualidade e exibir os resultados em um painel web com mapa. A metodologia envolveu o desenvolvimento incremental de software em Java, com um sensor simulado que gera valores aleatórios dentro de faixas definidas e os envia por socket a um sistema receptor. Cada coleta é representada como um vetor em ℝ³; o Índice AquaMap (0 a 10) é obtido pelo produto escalar entre o vetor de notas dos indicadores e um vetor de pesos, e as anomalias são detectadas pelo vetor diferença entre coletas consecutivas. Os dados são armazenados em CSV e XLSX e exibidos em um painel com mapa, gráficos temporais, ranking de problemas, alertas e recomendações preventivas. Nos testes, o painel respondeu em cerca de 3 ms, todas as mensagens inválidas foram rejeitadas com mensagem adequada e o índice calculado coincidiu com o cálculo manual. Conclui-se que o protótipo cumpre o objetivo de organizar e comunicar as medições, mas não substitui a análise laboratorial nem permite declarar a potabilidade da água.
+A falta de informação acessível sobre a qualidade da água é um problema comum em comunidades urbanas e periféricas, onde muitas vezes não há acompanhamento contínuo dos parâmetros básicos. Este trabalho apresenta o AquaMap, um sistema computacional que organiza medições de qualidade da água e as apresenta de forma compreensível, rastreável e georreferenciada. O objetivo foi desenvolver um protótipo capaz de receber coletas de pH, turbidez e temperatura, calcular um índice de qualidade e exibir os resultados em um painel web com mapa. A metodologia envolveu o desenvolvimento incremental de software em Java, com um sensor simulado, acionado por uma aba do próprio painel (ou, opcionalmente, pelo terminal via socket), que gera valores aleatórios dentro de faixas definidas. Cada coleta é representada como um vetor em ℝ³; o Índice AquaMap (0 a 10) é obtido pelo produto escalar entre o vetor de notas dos indicadores e um vetor de pesos, e as anomalias são detectadas pelo vetor diferença entre coletas consecutivas. Os dados são armazenados em CSV e XLSX e exibidos em um painel com mapa, gráficos temporais, ranking de problemas, alertas e recomendações preventivas. Nos testes, o painel respondeu em cerca de 3 ms, todas as mensagens inválidas foram rejeitadas com mensagem adequada e o índice calculado coincidiu com o cálculo manual. Conclui-se que o protótipo cumpre o objetivo de organizar e comunicar as medições, mas não substitui a análise laboratorial nem permite declarar a potabilidade da água.
 
 **Palavras-chave:** qualidade da água; álgebra linear; georreferenciamento; monitoramento comunitário; ciência da computação.
 
@@ -37,7 +37,7 @@ A falta de informação acessível sobre a qualidade da água é um problema com
 
 ## ABSTRACT
 
-The lack of accessible information about water quality is a common problem in urban and peripheral communities, where basic parameters are often not monitored continuously. This work presents AquaMap, a computer system that organizes water quality measurements and presents them in an understandable, traceable and georeferenced way. The goal was to develop a prototype able to receive pH, turbidity and temperature samples, compute a quality index and display the results on a web dashboard with a map. The methodology followed incremental software development in Java, with a simulated sensor that generates random values within defined ranges and sends them over a socket to a receiving system. Each sample is represented as a vector in ℝ³; the AquaMap Index (0 to 10) is obtained from the dot product between the vector of indicator scores and a weight vector, and anomalies are detected through the difference vector between consecutive samples. Data are stored in CSV and XLSX files and shown on a dashboard with a map, time-series charts, a ranking of problems, alerts and preventive recommendations. In the tests, the dashboard responded in about 3 ms, every invalid message was rejected with an appropriate message, and the computed index matched the manual calculation. We conclude that the prototype meets the goal of organizing and communicating measurements, but it does not replace laboratory analysis and cannot declare water fit for consumption.
+The lack of accessible information about water quality is a common problem in urban and peripheral communities, where basic parameters are often not monitored continuously. This work presents AquaMap, a computer system that organizes water quality measurements and presents them in an understandable, traceable and georeferenced way. The goal was to develop a prototype able to receive pH, turbidity and temperature samples, compute a quality index and display the results on a web dashboard with a map. The methodology followed incremental software development in Java, with a simulated sensor, triggered from a tab of the dashboard itself (or, optionally, from the terminal over a socket), that generates random values within defined ranges. Each sample is represented as a vector in ℝ³; the AquaMap Index (0 to 10) is obtained from the dot product between the vector of indicator scores and a weight vector, and anomalies are detected through the difference vector between consecutive samples. Data are stored in CSV and XLSX files and shown on a dashboard with a map, time-series charts, a ranking of problems, alerts and preventive recommendations. In the tests, the dashboard responded in about 3 ms, every invalid message was rejected with an appropriate message, and the computed index matched the manual calculation. We conclude that the prototype meets the goal of organizing and communicating measurements, but it does not replace laboratory analysis and cannot declare water fit for consumption.
 
 **Keywords:** water quality; linear algebra; georeferencing; community monitoring; computer science.
 
@@ -66,10 +66,10 @@ Desenvolver um protótipo de sistema que receba, analise, armazene e apresente e
 (c) modelar cada coleta como vetor em ℝ³ e calcular o Índice AquaMap por produto escalar;
 (d) detectar anomalias pelo vetor diferença entre coletas consecutivas do mesmo bairro;
 (e) armazenar o histórico em arquivos CSV e XLSX e associar cada bairro a coordenadas geográficas;
-(f) implementar um painel web com mapa, filtro por bairro, gráficos temporais, ranking de problemas, alertas e recomendações;
+(f) implementar um painel web com mapa, filtro por bairro, gráficos temporais, ranking de problemas, alertas e recomendações, e com o cadastro e o envio de coletas pela própria interface (aba Sensor);
 (g) validar as entradas e avaliar o protótipo com cenários de teste.
 
-> O modelo trazia objetivos que o projeto **não fez**: banco de dados georreferenciado, cadastro/edição pela interface, permissões de usuário e avaliação com usuários. Reescrevi para bater com o que foi entregue. Se o professor exigir os itens originais, mantenham e expliquem nos resultados e na conclusão que ficaram para trabalhos futuros.
+> O modelo trazia objetivos que o projeto **não fez**: banco de dados georreferenciado, edição de registros pela interface, permissões de usuário e avaliação com usuários. O cadastro e o envio de coletas pela interface **foram feitos** (aba Sensor). Reescrevi para bater com o que foi entregue. Se o professor exigir os itens originais, mantenham e expliquem nos resultados e na conclusão que ficaram para trabalhos futuros.
 
 ---
 
@@ -106,10 +106,10 @@ O AquaMap se justifica por três motivos:
 A pesquisa é aplicada, com abordagem predominantemente quantitativa e desenvolvimento incremental de software. As etapas realizadas foram:
 
 1. **Levantamento de requisitos e público-alvo:** definição dos usuários (moradores, escolas e agentes de saúde), dos indicadores medidos e das informações que o painel deveria mostrar.
-2. **Desenho dos fluxos:** sensor → sistema receptor → arquivos → painel web.
+2. **Desenho dos fluxos:** painel (aba Sensor) → sistema → arquivos CSV/XLSX → painel web. O sensor no terminal, que envia as coletas por socket, continua disponível como alternativa.
 3. **Modelagem das entidades:** `Sensor` (gera uma medição dentro de uma faixa), `Medicao` (indicador, valor, unidade e horário), `RegistroColeta` (uma coleta completa salva no histórico) e o arquivo `comunidades.csv` (bairro, latitude e longitude).
-4. **Implementação:** sistema em Java 21 com Maven, comunicação por socket (porta 5050), servidor HTTP com API JSON (porta 8080), armazenamento em CSV/XLSX (Apache POI) e interface cartográfica (Leaflet + Chart.js).
-5. **Testes:** testes funcionais manuais do fluxo completo, testes de entradas inválidas enviadas ao socket e medição do tempo de resposta do painel.
+4. **Implementação:** sistema em Java 21 com Maven, comunicação por socket (porta 5050), servidor HTTP com API JSON (porta 8080) e rotas de escrita (POST) usadas pela aba Sensor, armazenamento em CSV/XLSX (Apache POI) e interface cartográfica (Leaflet + Chart.js).
+5. **Testes:** testes funcionais manuais do fluxo completo, testes de entradas inválidas enviadas ao socket e às rotas HTTP, conferência dos arquivos CSV/XLSX gerados, teste de "começar do zero" com restauração do backup e medição do tempo de resposta do painel.
 
 Cada coleta registra data/hora, responsável, bairro, valor e unidade de cada indicador, o índice calculado, a classificação e a análise de variação. **Todos os dados usados neste trabalho são sintéticos**, gerados pelo sensor simulado. Dados reais dependeriam de equipamento calibrado, autorização dos responsáveis pelos pontos de coleta e protocolo de amostragem adequado.
 
@@ -122,24 +122,28 @@ Cada coleta registra data/hora, responsável, bairro, valor e unidade de cada in
 ### 6.1 Arquitetura
 
 ```
-SensorApp ──(socket, porta 5050)──► SistemaApp / SistemaAquaMap ──► data/<responsável>/coletas.csv e coletas.xlsx
-                                             │
-                                             └──► PainelServidor (HTTP, porta 8080) ──► painel.html no navegador
+painel.html (navegador) ──HTTP, porta 8080──► PainelServidor ──► SistemaAquaMap ──► data/<responsável>/coletas.csv e coletas.xlsx
+   leitura:  GET  /api/dados                                          ▲
+   escrita:  POST /api/coleta, /api/agendar, /api/reiniciar           │
+                                                                      │
+SensorApp (terminal, opcional) ──socket, porta 5050──► SistemaApp ────┘
 ```
 
 | Componente | Função |
 |---|---|
 | `Sensor` / `Medicao` | Sensor simulado e a medição que ele gera |
-| `SensorApp` | Programa do sensor: pede responsável e bairro e envia as coletas |
+| `SensorApp` | Sensor no terminal (opcional): pede responsável e bairro e envia as coletas por socket |
 | `SistemaApp` | Recebe as mensagens do socket e inicia o painel |
-| `SistemaAquaMap` | Índice, classificação, anomalias, histórico e agendamentos |
+| `SistemaAquaMap` | Índice, classificação, anomalias, histórico, agendamentos e arquivamento dos dados |
+| `ReiniciarApp` | "Começar do zero" pelo terminal (arquiva os dados em `data/backup/`) |
 | `RegrasQualidade` | Limites dos indicadores e recomendações preventivas |
 | `ExportadorXlsx` | Gera a planilha XLSX |
-| `PainelServidor` + `painel.html` | Servidor web, API `/api/dados` e página do painel |
+| `PainelServidor` + `painel.html` | Servidor web, API `/api/dados`, rotas da aba Sensor (`/api/coleta`, `/api/agendar`, `/api/reiniciar`) e página do painel |
+| `iniciar.cmd`, `parar.cmd`, `reiniciar.cmd` | Scripts para ligar o sistema, desligá-lo e começar do zero |
 
 ### 6.2 Entradas
 
-O sensor simulado gera valores aleatórios uniformes nas faixas: pH de 6,0 a 9,0; turbidez de 0,5 a 50 NTU; temperatura de 20 a 35 °C. O usuário informa o nome do responsável e o bairro. Cada coleta é enviada como texto: um cabeçalho `COLETA;responsável;bairro` seguido de uma linha `indicador;valor;unidade` por medição.
+O sensor simulado gera valores aleatórios uniformes nas faixas: pH de 6,0 a 9,0; turbidez de 0,5 a 50 NTU; temperatura de 20 a 35 °C. O usuário informa o nome do responsável e o bairro (no máximo 60 caracteres cada) na aba **Sensor** do painel e escolhe entre **Coletar agora** e **Simular próximo mês**; os valores não são digitados, e sim sorteados pelo sistema. No sensor em terminal, cada coleta é enviada por socket como texto: um cabeçalho `COLETA;responsável;bairro` seguido de uma linha `indicador;valor;unidade` por medição. Pelo painel, o navegador envia uma requisição `POST /api/coleta` com o responsável, o bairro e o modo (`normal` ou `proximo_mes`).
 
 ### 6.3 Algoritmo do Índice AquaMap (álgebra linear)
 
@@ -172,38 +176,56 @@ Classificação: I ≥ 8 → BOA; 5 ≤ I < 8 → REGULAR; I < 5 → RUIM. Troca
 
 ### 6.4 Evolução temporal e agendamento
 
-Após cada coleta, o sistema agenda a próxima para um mês depois (`data/agendamentos.csv`) e recusa novas coletas do mesmo bairro e responsável antes dessa data. Para simular a passagem do tempo nos testes, o sensor envia `COLETA_TESTE`, que registra a coleta com data igual à anterior mais um mês. Assim o histórico mensal pode ser construído e os gráficos temporais podem ser avaliados.
+Depois de cada coleta, o usuário pode pedir que a próxima seja agendada para um mês depois (`data/agendamentos.csv`). Havendo agendamento, o sistema recusa novas coletas normais do mesmo bairro e responsável antes dessa data. Para simular a passagem do tempo nos testes, o sensor envia `COLETA_TESTE` (botão **Simular próximo mês** no painel e opção `0` no terminal), que registra a coleta com data igual à anterior mais um mês. Assim o histórico mensal pode ser construído e os gráficos temporais podem ser avaliados. O botão **Agendar próxima coleta** do painel equivale à resposta "S" do terminal e agenda a próxima coleta para daqui a um mês. Por isso algumas coletas de demonstração têm datas futuras.
 
 ### 6.5 Interface (painel web)
 
-O painel tem um menu lateral com três telas: **Visão Geral** (mapa, indicadores principais e alertas), **Monitoramento** (gráficos e ranking) e **Cartilha Educacional** (texto em linguagem simples, com estatísticas do sistema e explicação de como o índice é calculado). A página consulta `/api/dados` a cada 5 segundos e mostra:
-- **Mapa das comunidades:** um ponto por bairro, colorido conforme a última classificação;
-- **Alertas e recomendações preventivas:** os problemas das coletas mais recentes (até 15), cada um com uma orientação;
-- **Evolução histórica do índice**, com **filtro por bairro**;
-- **Gráfico dos indicadores** (pH, turbidez, temperatura) ao longo das coletas;
-- **Ranking dos fatores de contaminação:** quantas coletas tiveram cada problema.
+O painel tem um menu lateral com quatro telas. A página consulta `/api/dados` a cada 5 segundos e só redesenha quando os dados mudam.
+
+**Visão Geral** (situação atual):
+- **Faixa de situação** colorida (verde, amarela ou vermelha) com uma frase e o aviso de que a classificação é indicativa e não atesta potabilidade;
+- **Cartões** com o número de pontos monitorados, o percentual de pontos BOA, o percentual de pontos críticos (RUIM) e os alertas ativos;
+- **Medidor do Índice AquaMap** (0 a 10) com as faixas BOA, REGULAR e RUIM, mostrando a conta da média das três notas;
+- **Uma régua por indicador** (pH, turbidez e temperatura): a faixa verde marca os valores adequados, a bolinha o valor medido, e cada régua mostra a nota de 0 a 10;
+- **Mapa das comunidades:** um ponto por bairro, colorido conforme a última classificação e com o índice escrito no pino; clicar no ponto atualiza o medidor e as réguas para aquele bairro;
+- **Alertas e recomendações preventivas:** os problemas das coletas mais recentes (até 15), cada um com a orientação "o que fazer".
+
+**Monitoramento** (evolução no tempo):
+- **Pontos cadastrados:** responsável, bairro, número de coletas, última coleta, situação atual e próxima coleta agendada; clicar numa linha filtra os gráficos por esse bairro;
+- **Resumo:** índice médio, melhor coleta, pior coleta e tendência em relação à coleta anterior;
+- **Evolução do índice** com fundo dividido nas faixas BOA, REGULAR e RUIM, e **filtro por bairro**;
+- **Gráficos de pH, turbidez e temperatura** com a faixa adequada sombreada e os pontos fora dela em vermelho;
+- **Ranking dos fatores de contaminação** (quantas coletas tiveram cada problema) e **tabela das últimas coletas**.
+
+**Cartilha Educacional:** texto em linguagem simples, com estatísticas do sistema e a explicação de como o índice é calculado.
+
+**Sensor:** cadastro do responsável e do bairro, **Coletar agora**, **Simular próximo mês**, **Agendar próxima coleta**, o registro da sessão e o botão **Reiniciar dados (guardando backup)**. Depois de cada coleta, a tela mostra o índice, a variação em relação à coleta anterior e as réguas dos indicadores.
 
 ### 6.6 Exportação de dados
 
-Cada responsável tem uma pasta com `coletas.csv` e `coletas.xlsx`, regravados a cada nova coleta, em ordem cronológica.
+Cada responsável tem uma pasta (`data/<responsável>/`) com `coletas.csv` e `coletas.xlsx`, regravados a cada nova coleta, em ordem cronológica. As planilhas são a **cópia de segurança** dos dados: o histórico é recarregado dos CSV quando o sistema liga. A planilha XLSX traz um título, a observação de que as interpretações não confirmam contaminação, as referências consultadas, o cabeçalho e uma linha por coleta.
+
+A cada coleta feita pelo painel, o sistema **notifica** se as planilhas foram **criadas** (primeira coleta do responsável) ou **atualizadas**: o painel mostra um aviso no canto da tela e uma faixa no resultado, com a pasta e os nomes dos arquivos, e o terminal do sistema registra a mesma informação. O servidor confere que os dois arquivos foram gravados naquele momento e avisa quando não for possível confirmar.
+
+**Começar do zero.** Para limpar a demonstração, o botão **Reiniciar dados** (aba Sensor) ou o `reiniciar.cmd` **movem** as coletas, as planilhas e os agendamentos para `data/backup/AAAA-MM-DD_HH-mm-ss/`, sem apagar nada, e o sistema recomeça vazio. O arquivo `comunidades.csv` (coordenadas do mapa) é mantido, e a pasta de backup não é lida como histórico. Para desfazer, basta copiar os arquivos de volta para `data/` e reiniciar o sistema.
 
 ### 6.7 Tratamento de erros
 
-Mensagens vazias, comandos desconhecidos, coletas sem os três indicadores, valores não numéricos, medições mal formatadas, datas inválidas e coletas antes da data agendada são rejeitadas com mensagem explicativa, sem derrubar o sistema. Registros corrompidos no CSV são ignorados ao carregar o histórico, e falhas ao gravar arquivos são informadas no console.
+Mensagens vazias, comandos desconhecidos, coletas sem os três indicadores, valores não numéricos, medições mal formatadas, datas inválidas e coletas antes da data agendada são rejeitadas com mensagem explicativa, sem derrubar o sistema. Nas rotas HTTP da aba Sensor, requisições sem o cabeçalho de segurança (`X-AquaMap`) ou que não sejam POST recebem o erro 403, campos vazios recebem 400 ("Informe o responsável e o bairro") e o pedido de começar do zero sem confirmação também recebe 400. A tela de resultado mostra a mensagem de erro em linguagem clara e, quando a coleta é recusada por agendamento, sugere o botão "Simular próximo mês". Registros corrompidos no CSV são ignorados ao carregar o histórico, e falhas ao gravar arquivos são informadas no console.
 
 ### 6.8 Privacidade, perfis de acesso e histórico de alterações
 
-O sistema guarda apenas o nome informado do responsável e o bairro, sem endereço, documento ou contato, o que reduz a exposição de dados pessoais. O nome é usado para separar as pastas; caracteres inválidos são substituídos para evitar gravação fora da pasta `data`. **Ainda não há perfis de acesso nem histórico de alterações:** qualquer pessoa com acesso ao painel vê todos os dados, e os registros não são editados pela interface. Esses dois pontos ficam previstos para trabalhos futuros.
+O sistema guarda apenas o nome informado do responsável e o bairro, sem endereço, documento ou contato, o que reduz a exposição de dados pessoais. O nome é usado para separar as pastas; caracteres inválidos são substituídos para evitar gravação fora da pasta `data`, e o nome `backup` é reservado para as cópias de segurança. Os campos aceitam no máximo 60 caracteres. As rotas de escrita só aceitam requisições feitas pela própria página (cabeçalho `X-AquaMap`), o que impede que outro site aberto no navegador grave coletas, mas **não substitui autenticação**. **Ainda não há login, perfis de acesso nem histórico de alterações:** qualquer pessoa que alcance a porta do painel vê todos os dados e pode registrar coletas e reiniciar os dados, e os registros não são editados pela interface. As cópias de segurança de `data/backup/` guardam apenas versões anteriores dos arquivos, não um registro de quem alterou o quê. Esses pontos ficam previstos para trabalhos futuros.
 
 ### 6.9 Testes
 
-Os testes foram funcionais e manuais (não há testes automatizados): execução do fluxo sensor → sistema → painel, envio de mensagens inválidas ao socket e medição do tempo de resposta do painel. Os resultados estão na seção 7.
+Os testes foram funcionais e manuais (não há testes automatizados): execução do fluxo sensor → sistema → painel (pelo socket e pela aba Sensor), envio de mensagens inválidas ao socket e às rotas HTTP, conferência dos arquivos CSV e XLSX gerados, teste de começar do zero com restauração do backup, teste dos scripts `iniciar.cmd` e `reiniciar.cmd` e medição do tempo de resposta do painel. Os resultados estão na seção 7.
 
 ---
 
 ## 7. RESULTADOS
 
-> Todos os números abaixo foram obtidos executando o sistema em 28/10/2026 em um computador local, com os **dados sintéticos** já existentes em `data/david/coletas.csv`.
+> Os casos 1 a 14 foram executados em 28/10/2026 e os casos 15 a 31 em 12/11/2026, em um computador local, com os **dados sintéticos** existentes em `data/david/coletas.csv`. Nos casos 15 a 31, os dados criados pelos testes (responsáveis de teste) foram removidos ao final e os dados originais foram restaurados.
 
 ### 7.1 Casos de teste
 
@@ -212,7 +234,7 @@ Os testes foram funcionais e manuais (não há testes automatizados): execução
 | 1 | Compilação | `mvn compile` | Compilar sem erros | Compilou sem erros | OK |
 | 2 | Painel no ar | GET `/` | Página HTML | HTTP 200, 7.710 bytes | OK |
 | 3 | API de dados | GET `/api/dados` | JSON com comunidades, coletas, ranking e alertas | HTTP 200, 2.383 bytes, 4 blocos presentes | OK |
-| 4 | Carregar histórico | 3 coletas no CSV | 3 coletas no painel | 3 coletas carregadas | OK |
+| 4 | Carregar histórico | 4 coletas no CSV | 4 coletas no painel | 4 coletas carregadas (reexecutado em 12/11/2026) | OK |
 | 5 | Cálculo do índice | Coleta de 24/10/2026 | 7,08 (cálculo manual) | 7,08, REGULAR | OK |
 | 6 | Detecção de anomalia | Coletas de 10/2026 e 11/2026 | Anomalia em pH, turbidez e temperatura | "SIM: pH, turbidez, temperatura" | OK |
 | 7 | Mensagem vazia | (nada) | Rejeitar | "Mensagem vazia." | OK |
@@ -223,8 +245,25 @@ Os testes foram funcionais e manuais (não há testes automatizados): execução
 | 12 | Coleta antes do agendamento | Tarumã, agendada para 24/11/2026 | Recusar | "Coleta ainda nao liberada. A proxima esta agendada para 2026-11-24." | OK |
 | 13 | Data de agendamento inválida | `2026-13-45` | Rejeitar | "Data de agendamento invalida." | OK |
 | 14 | Arquivos após erros | Casos 7 a 13 | Nada gravado | Nenhum arquivo de coleta criado ou alterado | OK |
+| 15 | Coleta pela aba Sensor | `POST /api/coleta`, modo normal, responsável novo | Resposta com índice e classificação | `ok: true`, índice e classificação devolvidos | OK |
+| 16 | Planilhas criadas na primeira coleta | Primeira coleta de um responsável novo | Pasta com `coletas.csv` e `coletas.xlsx`; aviso "criada" | Os dois arquivos criados; `planilhaNova: true`; terminal: "Planilha criada: data/…/coletas.xlsx" | OK |
+| 17 | Planilhas atualizadas | Segunda coleta do mesmo responsável | Aviso "atualizada" | `planilhaNova: false`; terminal: "Planilha atualizada" | OK |
+| 18 | Conteúdo do XLSX | Abrir o XLSX de um responsável com 2 coletas | Título, referências, cabeçalho e 2 linhas de dados | 6 linhas: título, observação, referências, cabeçalho e as 2 coletas | OK |
+| 19 | Simular próximo mês | Modo `proximo_mes` após uma coleta em 12/11/2026 | Coleta com data 1 mês depois | Segunda coleta gravada com data de 12/12/2026 | OK |
+| 20 | Agendar pela aba Sensor | `POST /api/agendar` | Agendamento para daqui a 1 mês | "Proxima coleta … agendada para 2026-12-12." | OK |
+| 21 | Coleta recusada por agendamento | Coleta normal após o agendamento | Recusar | "Coleta ainda nao liberada. A proxima esta agendada para 2026-12-12." | OK |
+| 22 | Rota de escrita sem cabeçalho de segurança | `POST` sem `X-AquaMap` e `GET` em `/api/coleta` | Recusar | HTTP 403, "Requisicao nao permitida." | OK |
+| 23 | Campos vazios | `pessoa` vazio | Recusar | HTTP 400, "Informe o responsavel e o bairro." | OK |
+| 24 | Reiniciar sem confirmação | `POST /api/reiniciar` sem `confirmar=sim` | Recusar | HTTP 400, "Confirmacao ausente." | OK |
+| 25 | Começar do zero (botão do painel) | 4 coletas no sistema | Arquivos movidos para `data/backup/<data e hora>/`; sistema vazio; `comunidades.csv` mantido | 4 coletas arquivadas, 0 no sistema, agendamentos vazios e `comunidades.csv` mantido | OK |
+| 26 | Backup não volta ao reiniciar o sistema | Desligar e ligar o sistema após o caso 25 | 0 coletas | 0 coletas carregadas | OK |
+| 27 | Coleta depois do reinício | Nova coleta após o caso 25 | Funciona e cria as planilhas | Coleta registrada; `coletas.csv` e `coletas.xlsx` criados | OK |
+| 28 | Restaurar o backup | Copiar os arquivos de `data/backup/` de volta | Dados iguais aos originais | Arquivos idênticos aos originais (comparados antes e depois) | OK |
+| 29 | `reiniciar.cmd`, resposta N | Responder N | Nada alterado | "Cancelado. Nada foi alterado."; mesmo número de arquivos em `data/` | OK |
+| 30 | `reiniciar.cmd`, resposta S | Responder S | Arquivar e religar o sistema | Dados arquivados, painel no ar e 0 coletas no sistema | OK |
+| 31 | `iniciar.cmd` com o sistema já ligado | Rodar o script | Abrir só o painel, sem segunda cópia | Terminou sem erro e sem abrir janela de sensor; painel segue no ar (HTTP 200) | OK |
 
-**Taxa de sucesso:** 14 de 14 casos (100%).
+**Taxa de sucesso:** 31 de 31 casos (100%).
 
 ### 7.2 Tempo de resposta
 
@@ -240,14 +279,17 @@ Os testes foram funcionais e manuais (não há testes automatizados): execução
 | 24/10/2026 | 8,99 | 31,11 | 33,12 | 7,08 | REGULAR | Primeira coleta |
 | 24/11/2026 | 6,15 | 2,29 | 21,55 | 9,62 | BOA | pH, turbidez, temperatura |
 | 24/12/2026 | 8,69 | 16,58 | 22,03 | 8,77 | BOA | pH, turbidez |
+| 24/01/2027 | 8,38 | 43,55 | 29,34 | 7,10 | REGULAR | turbidez, temperatura |
 
-Ranking gerado: pH alcalino (2), turbidez alta (2), variação brusca (2), temperatura alta (1), pH ácido (1).
+As datas de dezembro de 2026 e janeiro de 2027 são futuras porque essas coletas foram geradas com a função "simular próximo mês".
+
+Ranking gerado: turbidez alta (3), variação brusca (3), pH alcalino (2), temperatura alta (1), pH ácido (1).
 
 ### 7.4 Avaliação cartográfica
 
 - **Posicionamento:** o Tarumã aparece no mapa, mas a API arredonda as coordenadas para duas casas decimais (−3,0150 vira −3,02). Isso desloca o ponto em até cerca de 500 m: serve para indicar o bairro, não um ponto exato de coleta.
-- **Filtros:** o filtro por bairro funciona. Não há filtro por período nem por parâmetro.
-- **Legendas:** o mapa usa as cores verde (BOA), amarelo (REGULAR) e vermelho (RUIM).
+- **Filtros:** o filtro por bairro funciona (pela lista e também clicando em uma linha da tabela de pontos cadastrados). Não há filtro por período nem por parâmetro.
+- **Legendas:** o mapa tem uma legenda com as cores verde (BOA), amarelo (REGULAR), vermelho (RUIM) e cinza (sem coleta), e cada pino mostra o índice escrito. Sem coletas, o pino do bairro aparece em cinza com "?".
 
 ### 7.5 Problemas identificados
 
@@ -256,6 +298,9 @@ Ranking gerado: pH alcalino (2), turbidez alta (2), variação brusca (2), tempe
 3. **Agendamentos duplicados:** `agendamentos.csv` tem a mesma linha repetida três vezes. Não afeta o funcionamento, porque vale a data mais recente.
 4. **Dependência de internet:** o mapa e os gráficos são carregados de CDN.
 5. **Dados apenas sintéticos:** não houve coleta real nem avaliação com usuários.
+6. **Valores sempre sorteados:** a aba Sensor não permite digitar os valores medidos, então não é possível montar um cenário específico (por exemplo, forçar turbidez alta) na demonstração.
+7. **Sem autenticação:** qualquer pessoa que alcance a porta do painel pode registrar coletas e reiniciar os dados. O cabeçalho `X-AquaMap` protege apenas contra gravações vindas de outros sites no navegador, não contra outros computadores da rede.
+8. **Nome do bairro:** o ponto só aparece no mapa se o nome digitado for igual ao de `comunidades.csv`; com acento diferente, a coleta é salva mas o ponto não aparece (a tela avisa).
 
 Como os dados são sintéticos e só três parâmetros são medidos, **nenhum resultado permite concluir que a água do Tarumã é própria ou imprópria para consumo.**
 
@@ -263,11 +308,11 @@ Como os dados são sintéticos e só três parâmetros são medidos, **nenhum re
 
 ## 8. CONCLUSÃO
 
-O AquaMap cumpriu o objetivo de organizar medições de qualidade da água e apresentá-las de forma compreensível, rastreável e georreferenciada. O protótipo recebe coletas por rede, calcula o Índice AquaMap por produto escalar, detecta variações bruscas pelo vetor diferença, guarda o histórico em CSV e XLSX e exibe mapa, gráficos, ranking, alertas e recomendações em um painel web. Os 14 casos de teste foram atendidos, o painel respondeu em cerca de 3 ms e o índice calculado coincidiu com o cálculo manual, mostrando na prática a aplicação de conceitos de Álgebra Linear.
+O AquaMap cumpriu o objetivo de organizar medições de qualidade da água e apresentá-las de forma compreensível, rastreável e georreferenciada. O protótipo recebe coletas por rede ou pela aba Sensor do próprio painel, calcula o Índice AquaMap por produto escalar, detecta variações bruscas pelo vetor diferença, guarda o histórico em CSV e XLSX (notificando quando as planilhas são criadas ou atualizadas) e exibe mapa, gráficos, ranking, alertas e recomendações em um painel web. Também permite começar do zero guardando uma cópia de segurança em `data/backup/`. Os 31 casos de teste foram atendidos, o painel respondeu em cerca de 3 ms e o índice calculado coincidiu com o cálculo manual, mostrando na prática a aplicação de conceitos de Álgebra Linear.
 
-O trabalho tem limitações importantes. Os resultados dependem da qualidade das medições, e o sensor atual é simulado. O painel depende de conexão com a internet. A representatividade espacial é limitada: há um ponto por bairro, com coordenadas arredondadas. A média ponderada pode classificar como BOA uma coleta com um indicador fora do limite. Não houve avaliação com usuários. Por tudo isso, o sistema não substitui a análise laboratorial nem declara a potabilidade da água.
+O trabalho tem limitações importantes. Os resultados dependem da qualidade das medições, e o sensor atual é simulado. O painel depende de conexão com a internet. A representatividade espacial é limitada: há um ponto por bairro, com coordenadas arredondadas. A média ponderada pode classificar como BOA uma coleta com um indicador fora do limite. Os valores do sensor são sempre sorteados e não há login nem perfis de acesso. Não houve avaliação com usuários. Por tudo isso, o sistema não substitui a análise laboratorial nem declara a potabilidade da água.
 
-Como trabalhos futuros, propõe-se: coleta offline com sincronização posterior; integração com sensores físicos calibrados (por exemplo, ESP32 com sondas de pH, turbidez e temperatura); alertas e pesos configuráveis, incluindo uma regra que impeça a classificação BOA quando algum indicador estiver fora do limite; uso da matriz do histórico para médias e tendências; filtros por período e parâmetro; perfis de acesso e histórico de alterações para auditoria dos registros; interoperabilidade com bases públicas de qualidade da água; e um aplicativo Android.
+Como trabalhos futuros, propõe-se: coleta offline com sincronização posterior; integração com sensores físicos calibrados (por exemplo, ESP32 com sondas de pH, turbidez e temperatura); alertas e pesos configuráveis, incluindo uma regra que impeça a classificação BOA quando algum indicador estiver fora do limite; uso da matriz do histórico para médias e tendências; filtros por período e parâmetro; digitação dos valores medidos na aba Sensor; autenticação, perfis de acesso e histórico de alterações para auditoria dos registros; interoperabilidade com bases públicas de qualidade da água; e um aplicativo Android.
 
 ---
 

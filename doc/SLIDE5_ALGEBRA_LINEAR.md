@@ -105,3 +105,40 @@ Montar a matriz m × 3 do histórico, calcular a **matriz de covariância** e se
 
 **5. "O índice é confiável para dizer se a água é potável?"**
 Não. São só três parâmetros, o sensor é simulado e a média pode esconder um indicador ruim. Exemplo real: em 24/12/2026 a turbidez foi 16,58 NTU (acima do limite de 5), mas o índice deu 8,77 (BOA). Por isso o painel mostra os alertas separadamente.
+
+---
+
+## Demonstração ao vivo (slides 7 e 8: Produto Final e Resultados)
+
+**Antes de começar:** rode `.\iniciar.cmd`. Se o painel já tiver dados, comece do zero: aba **Sensor** → **Reiniciar dados (guardando backup)**, ou `.\reiniciar.cmd`. Nada é apagado, os dados antigos vão para `data/backup/`. Começar com o painel vazio dá começo à história.
+
+| Passo | O que fazer | O que falar (ligação com a álgebra linear) |
+|---|---|---|
+| 1 | Mostrar a **Visão Geral** vazia | "Ainda não há coletas: o sistema aguarda a primeira medição." |
+| 2 | Aba **Sensor**: responsável `Maria`, bairro `taruma` (igual ao mapa) → **Coletar agora** | "O sensor gera o vetor **x** = (pH, turbidez, temperatura)." |
+| 3 | No resultado, mostrar as 3 réguas | "Cada régua é o desvio **d**: quanto o valor saiu da faixa verde. A nota é 10 − **A·d** (slide 5B)." |
+| 4 | **Visão Geral**: medidor do índice | "O índice é a média das três notas: produto interno **n · w** com **w** = (⅓ ; ⅓ ; ⅓) (slide 5C)." |
+| 5 | Mostrar o aviso "Planilha criada" e abrir `data/Maria/coletas.xlsx` | "Cada coleta vai para CSV e XLSX: é a cópia de segurança dos dados." |
+| 6 | **Simular próximo mês** (2 ou 3 vezes) | "Cada clique cria a coleta do mês seguinte, para montar o histórico." |
+| 7 | **Visão Geral**: alertas | "**Δ** = **x**atual − **x**anterior. Se |Δᵢ| passa do limite, é variação brusca (vetor diferença)." |
+| 8 | **Monitoramento**: pontos cadastrados, gráfico do índice, gráficos com a faixa verde, ranking | "Evolução no tempo, ranking dos fatores e a tabela dos pontos cadastrados." |
+| 9 | **Cartilha** | "Linguagem simples para a comunidade; explica como o índice é calculado." |
+
+**Dicas:**
+- Os valores são **sorteados**, então cada demonstração dá números diferentes. Tenha o exemplo do slide 5B pronto com números reais (24/10/2026, índice 7,08).
+- Se a coleta normal for recusada com "ainda não liberada", é porque existe um agendamento para aquele ponto: use **Simular próximo mês**.
+- O bairro precisa ter o mesmo nome de `data/comunidades.csv` (`taruma`, sem acento) para o ponto aparecer no mapa.
+
+## O que o edital pede no painel (Projeto 02) e onde está
+
+| Item do edital | Onde aparece no painel |
+|---|---|
+| Mapa das comunidades monitoradas | Visão Geral, mapa |
+| Gráficos de qualidade da água | Monitoramento: gráficos de pH, turbidez, temperatura e índice |
+| Evolução histórica dos indicadores | Monitoramento: gráficos ao longo das coletas e tabela de últimas coletas |
+| Ranking de fatores de contaminação | Monitoramento: ranking |
+| Alertas ambientais | Visão Geral: alertas |
+| Recomendações preventivas | Visão Geral: "O que fazer" em cada alerta |
+| Cartilha digital | Cartilha Educacional (conceitos, saúde, como o índice é calculado e a porcentagem de pontos BOA). A porcentagem de pontos adequados e críticos também aparece nos cartões da Visão Geral |
+
+O edital diz que a cartilha "poderá conter" também **gráficos**, **impactos ambientais da contaminação** e **evolução da qualidade da água**. A cartilha do painel ainda não tem esses três itens: se houver tempo, vale acrescentá-los (ou incluí-los na cartilha impressa).

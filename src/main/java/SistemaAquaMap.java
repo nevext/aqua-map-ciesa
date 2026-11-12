@@ -359,6 +359,7 @@ public class SistemaAquaMap {
             Path arquivoCSV = pastaPessoa.resolve("coletas.csv");
             Path arquivoXlsx = pastaPessoa.resolve("coletas.xlsx");
             Files.createDirectories(pastaPessoa);
+            boolean planilhaNova = !Files.exists(arquivoXlsx);
             ArrayList<RegistroColeta> coletasDaPessoa = new ArrayList<>();
             for (RegistroColeta registro : historico) {
                 if (registro.getPessoa().equalsIgnoreCase(coleta.getPessoa())) {
@@ -377,6 +378,8 @@ public class SistemaAquaMap {
                     java.nio.file.StandardOpenOption.WRITE,
                     java.nio.file.StandardOpenOption.TRUNCATE_EXISTING);
             new ExportadorXlsx().exportar(arquivoXlsx, coletasDaPessoa);
+            System.out.println("[AQUAMAP] Planilha " + (planilhaNova ? "criada" : "atualizada") + ": "
+                    + arquivoXlsx.toString().replace('\\', '/') + " (e coletas.csv)");
         } catch (IOException erro) {
             System.out.println("[AQUAMAP] Nao foi possivel atualizar os arquivos da coleta: " + erro.getMessage());
         }

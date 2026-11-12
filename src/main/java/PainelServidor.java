@@ -111,6 +111,10 @@ public class PainelServidor {
             return;
         }
 
+        // Antes de coletar: se a planilha ainda nao existe, esta coleta vai criar a pasta e os arquivos.
+        String pasta = sistema.pastaDasPlanilhas(pessoa);
+        boolean planilhaNova = !Files.exists(Path.of(pasta, "coletas.xlsx"));
+
         ArrayList<Medicao> coleta = new ArrayList<>();
         coleta.add(sensorPH.coletar());
         coleta.add(sensorTurbidez.coletar());
@@ -125,13 +129,13 @@ public class PainelServidor {
             return;
         }
         // Confere se o CSV e o XLSX foram mesmo gravados agora (e nao so se existem de antes).
-        String pasta = sistema.pastaDasPlanilhas(pessoa);
         boolean planilhas = planilhaAtualizada(Path.of(pasta, "coletas.csv"))
                 && planilhaAtualizada(Path.of(pasta, "coletas.xlsx"));
         String json = "{"
                 + "\"ok\":true,"
                 + "\"pasta\":" + texto(pasta) + ","
                 + "\"planilhas\":" + planilhas + ","
+                + "\"planilhaNova\":" + planilhaNova + ","
                 + "\"mensagem\":" + texto(mensagem) + ","
                 + "\"indice\":" + resposta.group(1).replace(',', '.') + ","
                 + "\"classificacao\":" + texto(resposta.group(2)) + ","

@@ -231,6 +231,17 @@
   .log-item:last-child { border-bottom: none; }
   .log-item time { color: var(--texto-suave); font-variant-numeric: tabular-nums; min-width: 62px; }
 
+  /* ---------- avisos flutuantes ---------- */
+  #toasts { position: fixed; top: 18px; right: 18px; z-index: 2000; display: grid; gap: 10px; width: min(400px, calc(100vw - 36px)); }
+  .toast {
+    background: #fff; border: 1px solid var(--borda); border-left: 5px solid var(--verde); border-radius: 10px; cursor: pointer;
+    padding: 12px 14px; box-shadow: 0 8px 24px rgba(11,61,71,.22); font-size: .86rem; line-height: 1.45; animation: toast-entra .25s ease;
+  }
+  .toast.erro { border-left-color: var(--vermelho); }
+  .toast strong { display: block; font-size: .92rem; color: var(--lateral); margin-bottom: 2px; }
+  .toast code { font-size: .8rem; word-break: break-all; }
+  @keyframes toast-entra { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+
   /* ---------- cartilha ---------- */
   .cartilha { max-width: 760px; line-height: 1.65; font-size: .97rem; }
   .cartilha h3 { color: var(--lateral); margin-top: 1.6em; }
@@ -263,6 +274,8 @@
 </style>
 </head>
 <body>
+
+<div id="toasts" aria-live="polite"></div>
 
 <div class="app">
   <aside class="lateral">
@@ -493,7 +506,7 @@
             <input id="s-pessoa" type="text" maxlength="60" placeholder="Ex.: Maria Silva" autocomplete="off">
           </label>
           <label class="campo">Bairro / comunidade
-            <input id="s-bairro" type="text" maxlength="60" list="s-bairros" placeholder="Ex.: Tarumã" autocomplete="off">
+            <input id="s-bairro" type="text" maxlength="60" list="s-bairros" placeholder="Ex.: Taruma (igual ao mapa)" autocomplete="off">
           </label>
           <datalist id="s-bairros"></datalist>
           <div class="aviso-caixa" id="s-dica" hidden></div>
@@ -1059,6 +1072,16 @@
     else agenda.innerHTML = `📅 A coleta agendada para <strong>${dataBr(ag.data)}</strong> já está liberada.`;
   }
 
+  // Aviso flutuante no canto da tela (aparece em qualquer aba e some sozinho; clicar fecha).
+  function avisar(titulo, detalheHtml, erro) {
+    const el = document.createElement('div');
+    el.className = 'toast' + (erro ? ' erro' : '');
+    el.innerHTML = `<strong>${esc(titulo)}</strong>${detalheHtml || ''}`;
+    el.addEventListener('click', () => el.remove());
+    $('toasts').appendChild(el);
+    setTimeout(() => el.remove(), 8000);
+  }
+
   function registrarSessao(rotulo, r) {
     registroSessao.unshift({ hora: new Date().toLocaleTimeString('pt-BR'), rotulo, ok: r.ok, texto: r.mensagem });
     $('s-log').innerHTML = registroSessao.slice(0, 12).map(l =>
@@ -1088,7 +1111,7 @@
       </div>
       <p style="margin:0 0 6px;font-size:.9rem">${textoAnomalia(r.anomalia)}</p>
       <div class="aviso-caixa ${r.planilhas ? 'ok' : 'erro'}" style="margin:8px 0 6px">${r.planilhas
-        ? `📄 Planilhas atualizadas em <code>${esc(r.pasta)}/</code>: <code>coletas.csv</code> e <code>coletas.xlsx</code> (cópia de segurança desta coleta).`
+        ? `📄 Planilha <strong>${r.planilhaNova ? 'criada' : 'atualizada'}</strong> em <code>${esc(r.pasta)}/</code>: <code>coletas.xlsx</code> e <code>coletas.csv</code> (cópia de segurança dos dados).`
         : `⚠️ A coleta foi registrada no painel, mas não foi possível confirmar a gravação das planilhas em <code>${esc(r.pasta)}/</code>. Veja a janela do sistema.`}</div>
       ${['ph', 'turbidez', 'temperatura'].map(k => linhaIndicador(k, r[k])).join('')}
       <div class="res-acoes">
@@ -1114,7 +1137,15 @@
     }
     registrarSessao(rotulo, r.ok ? { ok: true, mensagem: `Índice ${fmt(r.indice)} (${r.classificacao}), ${resumoAnomalia(r.anomalia)}.` } : r);
     mostrarResultado(r, ctx);
-    if (r.ok) await atualizar();
+    if (r.ok) {
+      if (r.planilhas) {
+        avisar(r.planilhaNova ? '📄 Planilha criada' : '📄 Planilha atualizada',
+          `<code>${esc(r.pasta)}/coletas.xlsx</code><br>e <code>coletas.csv</code> (cópia de segurança dos dados)`);
+      } else {
+        avisar('⚠️ Planilha não confirmada', `A coleta foi registrada, mas não foi possível confirmar a gravação em <code>${esc(r.pasta)}/</code>.`, true);
+      }
+      await atualizar();
+    }
     enviando = false; desenharSensor();
   }
 
@@ -1129,6 +1160,7 @@
     }
     registrarSessao('Agendamento', r);
     msg.textContent = (r.ok ? '✅ ' : '⚠️ ') + amigavel(r.mensagem);
+    avisar(r.ok ? '📅 Próxima coleta agendada' : '⚠️ Agendamento não salvo', `<br>${esc(amigavel(r.mensagem))}`, !r.ok);
     if (!r.ok) botao.disabled = false;
     else await atualizar();
     desenharSensor();
@@ -1167,6 +1199,7 @@
     aviso.textContent = (r.ok ? '✅ ' : '⚠️ ') + amigavel(r.mensagem);
     aviso.hidden = false;
     if (!r.ok) return;
+    avisar('📦 Dados arquivados', 'As planilhas antigas foram guardadas em <code>data/backup/</code>. O painel recomeçou vazio.');
     registroSessao.length = 0;
     $('s-log').innerHTML = '<p class="vazio">Nenhuma coleta enviada ainda.</p>';
     $('s-resultado-painel').hidden = true;
