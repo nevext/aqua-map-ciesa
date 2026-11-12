@@ -13,23 +13,40 @@ public class SistemaApp {
 
     public static void main(String[] args) {
         SistemaAquaMap sistema = new SistemaAquaMap();
+        int portaPainel = PainelServidor.porta();
+        String urlPainel = "http://localhost:" + portaPainel;
 
-        System.out.println("=== AquaMap: sistema receptor ===");
-        System.out.println("Coletas e agendamentos ficam salvos na pasta data.");
-        System.out.println("Agendamentos salvos:");
-        sistema.mostrarAgendamentos();
-
+        boolean painelOk = false;
         try {
             new PainelServidor(sistema).iniciar();
-        } catch (IOException erroPainel) {
-            System.out.println("Nao foi possivel iniciar o painel: " + erroPainel.getMessage());
+            painelOk = true;
+        } catch (IOException ignorado) {
+            // mensagem unica em falhaParcialOuTotal
         }
 
-        System.out.println("Aguardando o sensor na porta " + PORTA + "...\n");
+        ServerSocket servidor = null;
+        try {
+            servidor = new ServerSocket(PORTA);
+        } catch (IOException ignorado) {
+            // mensagem unica em falhaParcialOuTotal
+        }
 
-        try (ServerSocket servidor = new ServerSocket(PORTA)) {
+        if (!painelOk || servidor == null) {
+            imprimirFalhaAoSubir(painelOk, servidor != null, urlPainel);
+            if (servidor != null) {
+                try {
+                    servidor.close();
+                } catch (IOException ignorado) {
+                }
+            }
+            System.exit(1);
+        }
+
+        imprimirRodando(urlPainel);
+
+        try (ServerSocket ativo = servidor) {
             while (true) {
-                try (Socket conexao = servidor.accept();
+                try (Socket conexao = ativo.accept();
                      BufferedReader entrada = new BufferedReader(new InputStreamReader(
                              conexao.getInputStream(), StandardCharsets.UTF_8))) {
                     ArrayList<String> mensagens = new ArrayList<>();
@@ -44,12 +61,46 @@ public class SistemaApp {
                         saida.println(resposta);
                     }
                 } catch (IOException | RuntimeException erroConexao) {
-                    System.out.println("[AQUAMAP] Erro ao receber dados: " + erroConexao.getMessage());
+                    System.out.println("[coleta] " + erroConexao.getMessage());
                 }
             }
         } catch (IOException erroServidor) {
-            System.out.println("Nao foi possivel iniciar o servidor: " + erroServidor.getMessage());
+            System.out.println("[erro] " + erroServidor.getMessage());
         }
+    }
+
+    private static void imprimirRodando(String urlPainel) {
+        System.out.println();
+        System.out.println("  AquaMap — sistema ligado");
+        System.out.println();
+        System.out.println("  Painel  " + urlPainel + "  (deve abrir no navegador)");
+        System.out.println("  Sensor  outro terminal: .\\sensor.cmd");
+        System.out.println();
+        System.out.println("  Ctrl+C aqui para parar.");
+        System.out.println();
+    }
+
+    private static void imprimirFalhaAoSubir(boolean painelOk, boolean receptorOk, String urlPainel) {
+        System.out.println();
+        System.out.println("  AquaMap — esta copia nao subiu (a outra ja esta rodando)");
+        System.out.println();
+        if (!painelOk && !receptorOk) {
+            System.out.println("  Portas " + PainelServidor.porta() + " e " + PORTA
+                    + " ocupadas — normal se voce ja rodou .\\sistema.cmd antes.");
+            System.out.println("  O painel em " + urlPainel + " vem desse outro processo.");
+        } else if (!painelOk) {
+            System.out.println("  Causa: porta do painel (" + PainelServidor.porta() + ") em uso.");
+        } else {
+            System.out.println("  Causa: porta do sensor (" + PORTA + ") em uso.");
+        }
+        System.out.println();
+        System.out.println("  O que fazer:");
+        System.out.println("    1) Ja esta rodando: abra " + urlPainel + " + .\\sensor.cmd");
+        System.out.println("    2) Fechar o terminal antigo com sistema (Ctrl+C)");
+        System.out.println("    3) Liberar as portas: .\\parar.cmd");
+        System.out.println("       manual: netstat -ano | findstr \":8080\"");
+        System.out.println("               taskkill /PID <numero> /F");
+        System.out.println();
     }
 
     private static String processarMensagens(SistemaAquaMap sistema, ArrayList<String> mensagens) {

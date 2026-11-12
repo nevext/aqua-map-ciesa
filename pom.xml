@@ -37,6 +37,20 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.6.4</version>
+                <executions>
+                    <execution>
+                        <id>sistema</id>
+                        <configuration>
+                            <mainClass>SistemaApp</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>sensor</id>
+                        <configuration>
+                            <mainClass>SensorApp</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -67,13 +67,15 @@ Precisa de Java 21 e Maven.
 
 1. Terminal 1, sistema receptor e painel:
    ```
-   mvn compile exec:java -Dexec.mainClass=SistemaApp
+   .\sistema.cmd
    ```
+   (ou `mvn compile exec:java@sistema`)
 2. Abra **http://localhost:8080** no navegador.
 3. Terminal 2, sensor:
    ```
-   mvn exec:java -Dexec.mainClass=SensorApp
+   .\sensor.cmd
    ```
+   (ou `mvn compile exec:java@sensor`)
    Digite o nome e o bairro. Enter faz uma coleta normal e 0 simula a coleta do próximo mês. O painel atualiza sozinho.
 
 Para um bairro aparecer no mapa, adicione uma linha em `data/comunidades.csv`:

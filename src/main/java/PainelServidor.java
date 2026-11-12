@@ -1,7 +1,9 @@
+import java.awt.Desktop;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +24,10 @@ import com.sun.net.httpserver.HttpServer;
 //   http://localhost:8080/api/dados -> dados em JSON que a pagina usa para desenhar tudo
 public class PainelServidor {
     private static final int PORTA = 8080;
+
+    public static int porta() {
+        return PORTA;
+    }
     private static final Path ARQUIVO_COMUNIDADES = Path.of("data", "comunidades.csv");
     private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final int LIMITE_ALERTAS = 15;
@@ -37,7 +43,17 @@ public class PainelServidor {
         servidor.createContext("/api/dados", this::enviarDados);
         servidor.createContext("/", this::enviarPagina);
         servidor.start(); // roda em uma thread propria, junto com o servidor do sensor
-        System.out.println("Painel disponivel em http://localhost:" + PORTA);
+        abrirNoNavegador("http://localhost:" + PORTA);
+    }
+
+    private static void abrirNoNavegador(String url) {
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().browse(new URI(url));
+            }
+        } catch (Exception ignorado) {
+            // o link ja aparece no resumo do SistemaApp
+        }
     }
 
     private void enviarPagina(HttpExchange troca) throws IOException {
