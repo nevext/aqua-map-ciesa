@@ -176,7 +176,7 @@ Após cada coleta, o sistema agenda a próxima para um mês depois (`data/agenda
 
 ### 6.5 Interface (painel web)
 
-A página consulta `/api/dados` a cada 5 segundos e mostra:
+O painel tem um menu lateral com três telas: **Visão Geral** (mapa, indicadores principais e alertas), **Monitoramento** (gráficos e ranking) e **Cartilha Educacional** (texto em linguagem simples, com estatísticas do sistema e explicação de como o índice é calculado). A página consulta `/api/dados` a cada 5 segundos e mostra:
 - **Mapa das comunidades:** um ponto por bairro, colorido conforme a última classificação;
 - **Alertas e recomendações preventivas:** os problemas das coletas mais recentes (até 15), cada um com uma orientação;
 - **Evolução histórica do índice**, com **filtro por bairro**;
